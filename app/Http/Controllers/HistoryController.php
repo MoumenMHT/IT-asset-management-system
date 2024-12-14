@@ -53,18 +53,16 @@ class HistoryController extends Controller
             }
 
 
-            $currentDateTime = now('Africa/Algiers');
             
             $history = new Hostory;
             $history->type = 'affectation';
-            $history->date = $currentDateTime;
             $history->id_equipement	 = $equipement->id_equipement; 
             $history->id_employer	 = $employer->id_employer; 
 
 
             $history->save();
 
-            return response()->json(['message' => 'Employer Inserted successfully!','data' => $history,], 200); 
+            return response()->json(['message' => 'Employer Inserted successfully!','id' => $history->id_history ,], 200); 
 
         }catch (\Exception $e) {
             // Log the error for debugging

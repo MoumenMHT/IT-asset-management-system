@@ -339,13 +339,7 @@ export default {
     }
   },
 
-    formatEmployeeName(employee) {
-      if (employee && employee.nom && employee.prenom) {
-    return `${employee.nom} ${employee.prenom}`;
-  } else {
-    return "Nom Employee"; // Return an empty string if no employee is selected
-  }      
-    },
+ 
 
     
 
@@ -399,7 +393,10 @@ export default {
           axios.post('/History', data)
                 .then(response => {
                     alert(response.data.message);
-                    console.log(response);
+                    console.log(response.data.id);
+                    const affectationId = response.data.id;
+                    console.log('Calling generatePdf with ID:', affectationId);
+                    this.generatePdf(affectationId);
                     
                 })
                 .catch(error => {
@@ -413,6 +410,12 @@ export default {
             
             
 },
+generatePdf(affectationId) {
+    console.log('Generating PDF for affectation ID:', affectationId);
+    // Trigger the PDF download
+    window.location.href = `/generate-pdf/${affectationId}`;
+},
+
     enableEdit(user) {
       if (user && user.id) {
       this.editRow = user.id;

@@ -8,6 +8,8 @@ use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\PdfController;
+
 
 
 /*
@@ -38,6 +40,8 @@ Route::get('/equipment/getEquipment', [EquipmentController::class, 'getEquipment
 Route::get('/provider/getProvider', [ProviderController::class, 'getProviders']);
 Route::get('/employer/getEmployer', [EmployerController::class, 'getEmployer']);
 Route::get('/user/getUser', [UsersController::class, 'getUser']);
+Route::get('/generate-pdf/{affectationId}', [PdfController::class, 'generatePdf'])->name('generate.pdf');
+
 
 
 
