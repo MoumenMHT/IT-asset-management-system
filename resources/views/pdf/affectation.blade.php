@@ -10,6 +10,7 @@
 <body>
     <div class="header">Affectation Details</div>
     <div class="details">
+        <p><strong>Employee: {{ $affectation->type}}</strong> </p>
         <p><strong>Employee: {{ $affectation->employer->nom }}</strong> </p>
         <p><strong>Equipment: {{ $affectation->equipement->num_serie }}</strong> </p>
         <p><strong>Date: {{ $affectation->created_at->format('Y-m-d') }}</strong> </p>

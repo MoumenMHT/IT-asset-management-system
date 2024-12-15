@@ -179,63 +179,88 @@
       <!-- Table Section -->
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">All users</h5>
+          <h5 class="card-title">All historys</h5>
           <div id="Table">
            <table class="table datatable" ref="datatable">
             <thead>
               <tr>
                 <th>Num</th>
-                <th>Code D'employer</th>
-                <th>Username</th>
-                <th>Password</th>
                 <th>Type</th>
+                <th>Employer</th>
+                <th>Eauipement</th>
+                <th>Créé à</th>
+                <th>Mis à jour à</th>
                 <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              <!-- Display message when no users are available -->
-              <tr v-if="users.length === 0">
-                <td colspan="7" class="text-center">No users available.</td>
+              <!-- Display message when no historys are available -->
+              <tr v-if="historys.length === 0">
+                <td colspan="7" class="text-center">No historys available.</td>
               </tr>
 
-              <!-- Loop through users -->
-              <tr v-for="(user, index) in users" :key="user.id">
+              <!-- Loop through historys -->
+              <tr v-for="(history, index) in historys" :key="history.id">
                 <!-- Editable Row -->
-                <template v-if="editRow === user.id">
+                <template v-if="editRow === history.id">
                   <td>{{ index + 1 }}</td>
+                  
                   <td>
-                    {{ user.code }}
+                    <select class="form-select" aria-label="Default select example" v-model="editablehistory.type" >
+                      <option value="" disabled>{{history.type}}</option>
+                      <option  >affectation</option>
+                      <option  >desaffectation</option>
+                    </select>
                   </td>
                   <td>
-                    <input
-                      type="text"
-                      v-model="editableuser.username"
-                      class="form-control"
-                      placeholder="user Reference"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableuser.password"
-                      class="form-control"
-                      placeholder="user Reference"
-                    />
+                    <v-autocomplete
+                    v-model="editablehistory.code"
+                    :items="employes"
+                    item-title="code"
+                    label="Code"
+                    variant="outlined"
+                    
+                    
+                  >
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
+                      :title="item.raw.code"
+                    ></v-list-item>
+                  </template>
+               
+                  </v-autocomplete>
                   </td>
                 
                   
                   <td>
-                    <select class="form-select" aria-label="Default select example" v-model="form.type" >
-                      <option value="" disabled>{{user.type}}</option>
-                      <option  >jfkjoih</option>
-                      <option  >kkkk</option>
-                    </select>
+                    <v-autocomplete
+                    v-model="editablehistory.equipement"
+                    :items="filteredEquipments"
+                    item-title="num_serie"
+                    label="Num Serie"
+                    variant="outlined"
+                  >
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :subtitle="`Type: ${item.raw.Type} - Marque: ${item.raw.marque} - Etat: ${item.raw.etat} - Date D'amortissement: ${item.raw.date_amortissement}`"
+                      :title="item.raw.num_serie"
+                    ></v-list-item>
+                  </template>
+                </v-autocomplete>
+                  </td>
+                  <td>
+                    {{ history.created_at }}
+                  </td>
+                  <td>
+                    {{ history.updated_at }}
                   </td>
                   
-
                   <td>
                     <button
-                      @click="confirmEdit(user.id, index)"
+                      @click="confirmEdit(history.id, index)"
                       class="btn btn-success btn-sm"
                     >
                       Confirm
@@ -253,21 +278,22 @@
                 <!-- Normal Row -->
                 <template v-else>
                   <td>{{ index +1 }}</td>
-                  <td>{{ user.code }}</td>
-                  <td>{{ user.username }}</td>
-                  <td>{{ user.password }}</td>
-                  <td>{{ user.type }}</td>
+                  <td>{{ history.type }}</td>
+                  <td>{{ history.code }}</td>
+                  <td>{{ history.equipement }}</td>
+                  <td>{{ history.created_at }}</td>
+                  <td>{{ history.updated_at }}</td>
 
                   <td>
                     <button
-                      @click="enableEdit(user)"
+                      @click="enableEdit(history)"
                       class="btn btn-primary btn-sm"
                     >
                       Edit
                     </button>
                     &nbsp;
                     <button
-                      @click="deleteuser(user.id, index)"
+                      @click="deletehistory(history.id, index)"
                       class="btn btn-danger btn-sm"
                     >
                       Delete
@@ -298,24 +324,17 @@ export default {
       selectedEquipment: null, 
       selectedType: 'defaultType',
       filteredEquipments: [],
-      
-      form: {
-            username: '',
-            password: '',
-            type: '',
-            employer: '',
-        },
-      users: [],
+
+      historys: [],
       employes: [],
       equipments: [],
       name: '',
       editRow: null, // To track the row being edited
-      editableuser: {
-            username: '',
-            password: '',
+      editablehistory: {
             type: '',
             employer: '',
-      }, // To temporarily store the editable user data
+            equipement: '',
+      }, // To temporarily store the editable history data
     };
   },
   
@@ -323,7 +342,7 @@ export default {
   mounted() {
     this.filteredEquipments = this.equipments;
 
-    this.fetchUsers();
+    this.fetchHistorys();
     this.getEmployer();
     this.getEquipment();
     // Retrieve the 'name' query parameter from the URL without using Vue Router
@@ -354,14 +373,14 @@ export default {
     
 
 
-    fetchUsers() {
+    fetchHistorys() {
       axios
-        .get("/user/getUser")
+        .get("/history/getHistory")
         .then((response) => {
-          this.users = response.data;
+          this.historys = response.data;
           
           console.log(response.data);
-          if(this.users){
+          if(this.historys){
             this.$nextTick(() => {
               
               this.initializeDataTable();
@@ -429,60 +448,66 @@ generatePdf(affectationId) {
     window.location.href = `/generate-pdf/${affectationId}`;
 },
 
-    enableEdit(user) {
-      if (user && user.id) {
-      this.editRow = user.id;
+    enableEdit(history) {
+      if (history && history.id) {
+      this.editRow = history.id;
 
-      this.editableuser = { ...user }; // Store a copy of the user data
+      this.editablehistory = { ...history }; // Store a copy of the history data
   } else {
-    console.log('No valid user data found!');
+    console.log('No valid history data found!');
   }
     },
     confirmEdit(id, index) {
-        let updateduser = this.editableuser;
+        let updatedhistory = this.editablehistory;
        
-        console.log('Updated user Before Sending:', updateduser);
+        console.log('Updated history Before Sending:', updatedhistory);
         console.log(index);
         console.log(id);
         
         
 
         axios
-            .put(`/userCrud/${id}`, updateduser)
+            .put(`/History/${id}`, updatedhistory)
             .then((response) => {
+              
                 alert(response.data.message);
-                console.log(response.data.user);
+                console.log(response.data);
             
-                this.users[index] = { ...updateduser }; // Update user in the users array
-                this.users[index].password = response.data.user;
+                this.historys[index] = { ...updatedhistory }; // Update history in the historys array
+                this.historys[index].password = response.data.history;
                 
                 this.editRow = null; // Exit editing mode
+                this.getEquipment; 
+                
+                
+
+                this.generatePdf(id);
                
               
            
             })
             .catch((error) => {
-            alert("Error updating user");
+            alert("Error updating history");
             console.log(error);
         });
     },
     cancelEdit() {
       this.editRow = null;
-      this.editableuser = {}; // Clear the temporary storage
+      this.editablehistory = {}; // Clear the temporary storage
     },
-    deleteuser(id, index) {
-      if (confirm("Are you sure you want to delete this user?")) {
+    deletehistory(id, index) {
+      if (confirm("Are you sure you want to delete this history?")) {
         axios
-          .delete(`/userCrud/${id}`)
+          .delete(`/historyCrud/${id}`)
           .then((response) => {
             console.log(response);
             
             alert(response.data.message);
-            this.users.splice(index, 1);
+            this.historys.splice(index, 1);
             
           })
           .catch((error) => {
-            alert("Error deleting user");
+            alert("Error deleting history");
           });
       }
     },

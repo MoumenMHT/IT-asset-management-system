@@ -40,6 +40,7 @@ Route::get('/equipment/getEquipment', [EquipmentController::class, 'getEquipment
 Route::get('/provider/getProvider', [ProviderController::class, 'getProviders']);
 Route::get('/employer/getEmployer', [EmployerController::class, 'getEmployer']);
 Route::get('/user/getUser', [UsersController::class, 'getUser']);
+Route::get('/history/getHistory', [HistoryController::class, 'getHistory']);
 Route::get('/generate-pdf/{affectationId}', [PdfController::class, 'generatePdf'])->name('generate.pdf');
 
 
