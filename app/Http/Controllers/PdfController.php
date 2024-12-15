@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hostory; 
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class PdfController extends Controller
 {

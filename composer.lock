@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "96e738ccfcd1768d69c3dcd9d96cdd26",
+    "content-hash": "23d0349e1fa873ba17cafa2e80e7e1e2",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -64,27 +64,27 @@
         },
         {
             "name": "barryvdh/laravel-dompdf",
-            "version": "v2.0.0",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/barryvdh/laravel-dompdf.git",
-                "reference": "1d47648c6cef37f715ecb8bcc5f5a656ad372e27"
+                "reference": "c96f90c97666cebec154ca1ffb67afed372114d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/1d47648c6cef37f715ecb8bcc5f5a656ad372e27",
-                "reference": "1d47648c6cef37f715ecb8bcc5f5a656ad372e27",
+                "url": "https://api.github.com/repos/barryvdh/laravel-dompdf/zipball/c96f90c97666cebec154ca1ffb67afed372114d8",
+                "reference": "c96f90c97666cebec154ca1ffb67afed372114d8",
                 "shasum": ""
             },
             "require": {
-                "dompdf/dompdf": "^2",
-                "illuminate/support": "^6|^7|^8|^9",
+                "dompdf/dompdf": "^2.0.7",
+                "illuminate/support": "^6|^7|^8|^9|^10|^11",
                 "php": "^7.2 || ^8.0"
             },
             "require-dev": {
-                "nunomaduro/larastan": "^1|^2",
-                "orchestra/testbench": "^4|^5|^6|^7",
-                "phpro/grumphp": "^1",
+                "larastan/larastan": "^1.0|^2.7.0",
+                "orchestra/testbench": "^4|^5|^6|^7|^8|^9",
+                "phpro/grumphp": "^1 || ^2.5",
                 "squizlabs/php_codesniffer": "^3.5"
             },
             "type": "library",
@@ -125,7 +125,7 @@
             ],
             "support": {
                 "issues": "https://github.com/barryvdh/laravel-dompdf/issues",
-                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v2.0.0"
+                "source": "https://github.com/barryvdh/laravel-dompdf/tree/v2.2.0"
             },
             "funding": [
                 {
@@ -137,7 +137,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-07-06T11:12:10+00:00"
+            "time": "2024-04-25T13:16:04+00:00"
         },
         {
             "name": "brick/math",
@@ -8178,12 +8178,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.3|^8.0"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }

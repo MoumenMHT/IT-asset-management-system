@@ -44,12 +44,14 @@ class HistoryController extends Controller
             
             $employer = Employer::where('id_employer', $validated['id_employer'])->first();
             if (!$employer) {
-                return response()->json(['message' => 'Employer not found!'], 200);
+                return response()->json(['error' => 'Employer not found!'], 200);
             }
 
-            $equipement = Equipment::where('id_equipement', $validated['id_equipement'])->first();
+            $equipement = Equipment::where('id_equipement', $validated['id_equipement'])
+                                    ->where('status', 'disponible')
+                                    ->first();
             if (!$equipement) {
-                return response()->json(['message' => 'Equipement not found!'], 200);
+                return response()->json(['error' => 'Equipement not found ou not disponible'], 200);
             }
 
 
@@ -59,6 +61,8 @@ class HistoryController extends Controller
             $history->id_equipement	 = $equipement->id_equipement; 
             $history->id_employer	 = $employer->id_employer; 
 
+            $equipement->status = "indisponible";
+            $equipement->update();
 
             $history->save();
 

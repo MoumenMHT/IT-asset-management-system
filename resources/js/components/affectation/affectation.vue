@@ -17,24 +17,24 @@
                 <div class="mb-3">
                   <label class="form-label">Employee Code</label>
                   <v-autocomplete
-                  v-model="selectedEmployee"
-                  :items="employes"
-                  item-title="code"
-                  label="Code"
-                  variant="outlined"
-                  return-object
-                  
-                  
-                >
-                <template v-slot:item="{ props, item }">
-                  <v-list-item
-                    v-bind="props"
-                    :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
-                    :title="item.raw.code"
-                  ></v-list-item>
-                </template>
+                    v-model="selectedEmployee"
+                    :items="employes"
+                    item-title="code"
+                    label="Code"
+                    variant="outlined"
+                    return-object
+                    
+                    
+                  >
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
+                      :title="item.raw.code"
+                    ></v-list-item>
+                  </template>
                
-              </v-autocomplete>
+                  </v-autocomplete>
                 </div>
                 <div class="mb-3">
                   <label class="form-label">Nom</label>
@@ -112,7 +112,15 @@
                     label="Num Serie"
                     variant="outlined"
                     return-object
-                  ></v-autocomplete>
+                  >
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :subtitle="`Type: ${item.raw.Type} - Marque: ${item.raw.marque} - Etat: ${item.raw.etat} - Date D'amortissement: ${item.raw.date_amortissement}`"
+                      :title="item.raw.num_serie"
+                    ></v-list-item>
+                  </template>
+                </v-autocomplete>
                 </div>
               
                 <!-- Equipment Details -->
@@ -392,11 +400,16 @@ export default {
 
           axios.post('/History', data)
                 .then(response => {
+                  if(response.data.message){
+
                     alert(response.data.message);
                     console.log(response.data.id);
                     const affectationId = response.data.id;
                     console.log('Calling generatePdf with ID:', affectationId);
                     this.generatePdf(affectationId);
+                  }else if(response.data.error) {
+                    alert(response.data.error);
+                  }
                     
                 })
                 .catch(error => {
@@ -437,16 +450,16 @@ generatePdf(affectationId) {
         axios
             .put(`/userCrud/${id}`, updateduser)
             .then((response) => {
+                alert(response.data.message);
+                console.log(response.data.user);
+            
+                this.users[index] = { ...updateduser }; // Update user in the users array
+                this.users[index].password = response.data.user;
+                
+                this.editRow = null; // Exit editing mode
+               
               
-            alert(response.data.message);
-            console.log(response.data.user);
-            
-            
-            this.users[index] = { ...updateduser }; // Update user in the users array
-            this.users[index].password = response.data.user;
-            
-            
-            this.editRow = null; // Exit editing mode
+           
             })
             .catch((error) => {
             alert("Error updating user");
