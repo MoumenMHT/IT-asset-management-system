@@ -214,11 +214,12 @@
                   </td>
                   <td>
                     <v-autocomplete
-                    v-model="editablehistory.code"
+                    v-model="editablehistory.employer"
                     :items="employes"
                     item-title="code"
                     label="Code"
                     variant="outlined"
+                    return-object
                     
                     
                   >
@@ -241,6 +242,7 @@
                     item-title="num_serie"
                     label="Num Serie"
                     variant="outlined"
+                    return-object
                   >
                   <template v-slot:item="{ props, item }">
                     <v-list-item
@@ -279,8 +281,8 @@
                 <template v-else>
                   <td>{{ index +1 }}</td>
                   <td>{{ history.type }}</td>
-                  <td>{{ history.code }}</td>
-                  <td>{{ history.equipement }}</td>
+                  <td>{{ history.employer.code }}</td>
+                  <td>{{ history.equipement.num_serie }}</td>
                   <td>{{ history.created_at }}</td>
                   <td>{{ history.updated_at }}</td>
 
@@ -292,12 +294,7 @@
                       Edit
                     </button>
                     &nbsp;
-                    <button
-                      @click="deletehistory(history.id, index)"
-                      class="btn btn-danger btn-sm"
-                    >
-                      Delete
-                    </button>
+                    
                   </td>
                 </template>
               </tr>
@@ -409,13 +406,13 @@ export default {
       submitForm() {
        
         const data = { 
-          id_employer: this.selectedEmployee.id, 
-          id_equipement: this.selectedEquipment.id 
+          employer: { id_employer: this.selectedEmployee.id },
+          equipement: {id_equipement: this.selectedEquipment.id }
         };
         console.log(data);
 
 
-        if (data.id_employer && data.id_equipement) {
+        if (data.employer && data.equipement) {
 
           axios.post('/History', data)
                 .then(response => {
@@ -458,7 +455,18 @@ generatePdf(affectationId) {
   }
     },
     confirmEdit(id, index) {
+      console.log('id is ' + id );
+      
         let updatedhistory = this.editablehistory;
+        console.log( updatedhistory);
+        console.log( this.historys[index]);
+         
+        
+        
+        if (JSON.stringify(updatedhistory) === JSON.stringify(this.historys[index])){
+          alert('u have change nothing');
+          return ;
+        }
        
         console.log('Updated history Before Sending:', updatedhistory);
         console.log(index);
@@ -467,7 +475,7 @@ generatePdf(affectationId) {
         
 
         axios
-            .put(`/History/${id}`, updatedhistory)
+            .post(`/History`, updatedhistory)
             .then((response) => {
               
                 alert(response.data.message);
@@ -478,9 +486,10 @@ generatePdf(affectationId) {
                 
                 this.editRow = null; // Exit editing mode
                 this.getEquipment; 
+                console.log(response);
                 
                 
-
+                
                 this.generatePdf(id);
                
               

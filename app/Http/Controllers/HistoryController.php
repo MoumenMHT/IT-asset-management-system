@@ -30,8 +30,8 @@ class HistoryController extends Controller
                     'type' => $history->type,
                     'created_at' => Carbon::parse($history->created_at)->format('Y-m-d H:i:s'),
                     'updated_at' => Carbon::parse($history->updated_at)->format('Y-m-d H:i:s'),
-                    'code' => $history->employer->code,
-                    'equipement' => $history->equipement->num_serie,
+                    'employer' => $history->employer,
+                    'equipement' => $history->equipement,
                 ];
             });
        
@@ -69,47 +69,77 @@ class HistoryController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'id_employer' => 'required|integer',
-            'id_equipement' => 'required|integer',
-        ]);
-
         try {
-            
-            $employer = Employer::where('id_employer', $validated['id_employer'])->first();
+            // Validate input data
+            $validated = $request->validate([
+                // Validate employer object
+                'employer' => 'required|array',
+                'employer.id_employer' => 'required|integer',
+    
+                // Validate equipment object
+                'equipement' => 'required|array',
+                'equipement.id_equipement' => 'required|integer',
+    
+                // Validate type field
+                'type' => '',
+            ]);
+    
+            // Find employer by id
+            $employer = Employer::where('id_employer', $validated['employer']['id_employer'])->first();
             if (!$employer) {
-                return response()->json(['error' => 'Employer not found!'], 200);
+                return response()->json(['message' => 'Employer not found!'], 200);
             }
-
-            $equipement = Equipment::where('id_equipement', $validated['id_equipement'])
-                                    ->where('status', 'disponible')
-                                    ->first();
-            if (!$equipement) {
-                return response()->json(['error' => 'Equipement not found ou not disponible'], 200);
-            }
-
-
-            
+    
+            // Initialize history object
             $history = new Hostory;
-            $history->type = 'affectation';
-            $history->id_equipement	 = $equipement->id_equipement; 
-            $history->id_employer	 = $employer->id_employer; 
-
-            $equipement->status = "indisponible";
-            $equipement->update();
-
+    
+            // Check if type is provided and handle accordingly
+            if (!empty($validated['type'])) {
+                $history->type = $validated['type'];
+    
+                // Find equipment
+                $equipement = Equipment::where('id_equipement', $validated['equipement']['id_equipement'])->first();
+                if ($equipement) {
+                    $history->id_equipement = $equipement->id_equipement;
+                }
+    
+            } else {
+                // Find available equipment
+                $equipement = Equipment::where('id_equipement', $validated['equipement']['id_equipement'])
+                                       ->where('status', 'disponible')
+                                       ->first();
+                
+                if (!$equipement) {
+                    return response()->json(['message' => 'Equipment not found or not available'], 200);
+                }
+    
+                $history->type = 'affectation';
+                $history->id_equipement = $equipement->id_equipement;
+    
+                // Update equipment status to "indisponible"
+                $equipement->status = "indisponible";
+                $equipement->update();
+            }
+    
+            // Set the employer id for the history
+            $history->id_employer = $employer->id_employer;
+    
+            // Save history object
             $history->save();
-
-            return response()->json(['message' => 'Employer Inserted successfully!','id' => $history->id_history ,], 200); 
-
-        }catch (\Exception $e) {
+    
+            // Return success response with history ID
+            return response()->json(['message' => 'Employer inserted successfully!', 'id' => $history->id_history], 200);
+    
+        } catch (\Exception $e) {
             // Log the error for debugging
             \Log::error($e->getMessage());
-            
+    
             // Return a generic error response
             return response()->json($e->getMessage(), 200);
         }
     }
+    
+    
 
     /**
      * Display the specified resource.
