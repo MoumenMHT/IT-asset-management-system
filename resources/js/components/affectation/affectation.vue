@@ -488,9 +488,9 @@ generatePdf(affectationId) {
                 this.getEquipment; 
                 console.log(response);
                 
+                const affectationId = response.data.id;
                 
-                
-                this.generatePdf(id);
+                //this.generatePdf(affectationId);
                
               
            

@@ -96,12 +96,25 @@ class HistoryController extends Controller
             // Check if type is provided and handle accordingly
             if (!empty($validated['type'])) {
                 $history->type = $validated['type'];
-    
+                
+
                 // Find equipment
                 $equipement = Equipment::where('id_equipement', $validated['equipement']['id_equipement'])->first();
                 if ($equipement) {
                     $history->id_equipement = $equipement->id_equipement;
                 }
+                if($validated['type']=== 'affectation'){
+                    $equipement->status = "indisponible";
+                    $equipement->id_employer = $employer->id_employer;
+
+
+
+                }else{
+                    $equipement->status = "disponible";
+                    $equipement->id_employer = null;
+
+                }
+                $equipement->update();
     
             } else {
                 // Find available equipment
@@ -115,6 +128,7 @@ class HistoryController extends Controller
     
                 $history->type = 'affectation';
                 $history->id_equipement = $equipement->id_equipement;
+                $equipement->id_employer = $employer->id_employer;
     
                 // Update equipment status to "indisponible"
                 $equipement->status = "indisponible";

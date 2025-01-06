@@ -16,6 +16,7 @@ class CreateEquipmentsTable extends Migration
         Schema::create('equipment', function (Blueprint $table) {
             $table->id('id_equipement');
             $table->unsignedBigInteger('id_contract');
+            $table->unsignedBigInteger('id_employer');
             $table->String('Type');
             $table->String('num_serie');
             $table->String('marque');
@@ -27,6 +28,8 @@ class CreateEquipmentsTable extends Migration
 
             // Foreign key constraint
             $table->foreign('id_contract')->references('id_contract')->on('contracts')->onDelete('cascade');
+            $table->foreign('id_employer')->references('id_employer')->on('employers')->onDelete('cascade');
+
         });
     }
 

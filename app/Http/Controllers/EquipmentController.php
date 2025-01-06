@@ -24,22 +24,26 @@ class EquipmentController extends Controller
     {
         
         try {
-            $equipments = Equipment::with('contract')->get();
-            if(!$equipments){
-                return response()->json( 'eroor' , 200); // Return contracts with a success message
+            $equipments = Equipment::get();
 
+            if ($equipments->isEmpty()) {
+                return response()->json('error', 200); // Return an error message if no equipments found
             }
+
             // Format the response
-            $formattedEquipment = $equipments->map(function ($equipments) {
+            $formattedEquipment = $equipments->map(function ($equipment) {
                 return [
-                    'id' => $equipments->id_equipement,
-                    'num_serie' => $equipments->num_serie,
-                    'Type' => $equipments->Type,
-                    'marque' => $equipments->marque,
-                    'etat' => $equipments->etat,
-                    'status' => $equipments->status,
-                    'date_amortissement' => $equipments->date_amortissement,
-                    'contract' => $equipments->contract->ref ?? null, 
+                    'id' => $equipment->id_equipement,
+                    'num_serie' => $equipment->num_serie,
+                    'Type' => $equipment->Type,
+                    'marque' => $equipment->marque,
+                    'etat' => $equipment->etat,
+                    'status' => $equipment->status,
+                    'date_amortissement' => $equipment->date_amortissement,
+                    'contract' => $equipment->contract ?? null, // Safely return the contract object
+                    'contractRef' => $equipment->contract->ref ?? null, // Safely get the contract reference
+                    'fournisseur' => $equipment->contract->fournisseur->nom ?? null, // Safely get fournisseur name
+                    'employer' => $equipment->employer ?? null,
                 ];
             });
        

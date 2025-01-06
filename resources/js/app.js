@@ -2,6 +2,9 @@
 
 require('./bootstrap');
 
+
+import VueGoodTablePlugin from 'vue-good-table-next';
+import 'vue-good-table-next/dist/vue-good-table-next.css';
 import 'datatables.net-bs5/css/dataTables.bootstrap5.min.css'; // Add the DataTable CSS
 import 'datatables.net'; // Import DataTable JS
 import 'datatables.net-bs5'; 
@@ -52,5 +55,7 @@ const app = createApp(App);
 app.use(router); // Use the router
 
 app.use(vuetify); // Use Vuetify
+app.use(VueGoodTablePlugin);
+
 
 app.mount('#application');  // Mount the main Vue app to the #application div

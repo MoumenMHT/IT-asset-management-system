@@ -9,6 +9,13 @@
     <ul class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
+        <router-link class="nav-link collapsed" :to="'/dashboard?name=' + name">
+          <i class="bi bi-grid"></i>
+          <span>Dashoard</span>
+        </router-link>
+      </li>
+
+      <li class="nav-item">
         <router-link class="nav-link collapsed" :to="'/structur?name=' + name">
           <i class="bi bi-grid"></i>
           <span>Structure</span>

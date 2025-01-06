@@ -6,6 +6,8 @@ import Structure from './components/structure/structure.vue';
 import Employer from './components/employer/employer.vue';
 import User from './components/user/user.vue';
 import Affectation from './components/affectation/affectation.vue';
+import Dashboard from './components/dashboard/dashboard.vue';
+
 
 
 const routes = [
@@ -16,6 +18,7 @@ const routes = [
   { path: '/employer', component: Employer },
   { path: '/user', component: User },
   { path: '/affectation', component: Affectation },
+  { path: '/dashboard', component: Dashboard },
 
 ];
 

@@ -36,8 +36,9 @@ class ContractsController extends Controller
                     'date_acquisition' => $contract->date_acquisition,
                     'garantie' => $contract->garantie,
                     'Type_contract' => $contract->Type_contract,
-                    'structure_nom' => $contract->structure->nom ?? null,
+                    'structure' => $contract->structure->nom ?? null,
                     'fournisseur' => $contract->fournisseur->nom ?? null, 
+                    'id_structure' => $contract->id_structure,
                 ];
             });
        

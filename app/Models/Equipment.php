@@ -18,11 +18,17 @@ class Equipment extends Model
         'etat',
         'status',
         'date_amortissement',
+        'id_employer',
     ];
 
     public function contract()
     {
         return $this->belongsTo(Contract::class, 'id_contract', 'id_contract');
     }
+    public function employer()
+    {
+        return $this->belongsTo(Employer::class, 'id_employer', 'id_employer');
+    }
+
 
 }

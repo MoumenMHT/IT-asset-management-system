@@ -58,9 +58,9 @@
     </div>
     <div class="content">
         <p>Sidi-Arcine, le<strong >{{$currentDate}}</strong></p>
-        <h2 style="text-align: center;">DÉCHARGE AFFECTATION N°{{ $affectation->id_history }}/INF/{{ $affectation->equipement->Type }}/2024</h2>
+        <h2 style="text-align: center;">{{$tittle}} N°{{ $affectation->id_history }}/INF/{{ $affectation->equipement->Type }}/2024</h2>
         <p>
-            Il a été remis ce jour, à  <strong>{{ $affectation->employer->prenom }} {{ $affectation->employer->nom }} {{ $affectation->employer->fonc }} {{ $affectation->employer->structure->nom }}</strong>, 
+            {{$description}} <strong>{{ $affectation->employer->prenom }} {{ $affectation->employer->nom }} {{ $affectation->employer->fonc }} {{ $affectation->employer->structure->nom }}</strong>, 
             le matériel informatique suivant :
         </p>
         <table>

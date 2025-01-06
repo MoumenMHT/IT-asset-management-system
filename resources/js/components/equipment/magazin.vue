@@ -154,7 +154,7 @@
                     <!-- Normal Row -->
                     <td>{{ index + 1 }}</td>
                     <td>{{ equipment.num_serie }}</td>
-                    <td>{{ equipment.contract }}</td>
+                    <td>{{ equipment.contract.ref }}</td>
                     <td>{{ equipment.Type }}</td>
                     <td>{{ equipment.marque }}</td>
                     <td>{{ equipment.etat }}</td>
@@ -338,6 +338,8 @@ export default {
         .get("/contracts/getContracts")
         .then((response) => {
           this.contracts = response.data;
+          console.log(this.contracts);
+          
           
           
         })
