@@ -28,6 +28,8 @@ Route::view('/signup', 'register');
 
 Route::post('/login', [UsersController::class, 'login']);
 Route::post('/users', [UsersController::class, 'create']);
+Route::post('/history/upload', [HistoryController::class, 'upload']);
+
 
 
 Route::get('/', function (){
@@ -41,6 +43,7 @@ Route::get('/provider/getProvider', [ProviderController::class, 'getProviders'])
 Route::get('/employer/getEmployer', [EmployerController::class, 'getEmployer']);
 Route::get('/user/getUser', [UsersController::class, 'getUser']);
 Route::get('/history/getHistory', [HistoryController::class, 'getHistory']);
+Route::post('/history/upload', [HistoryController::class, 'upload']);
 Route::get('/generate-pdf/{affectationId}', [PdfController::class, 'generatePdf'])->name('generate.pdf');
 
 

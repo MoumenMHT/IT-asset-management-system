@@ -32,6 +32,7 @@ class HistoryController extends Controller
                     'updated_at' => Carbon::parse($history->updated_at)->format('Y-m-d H:i:s'),
                     'employer' => $history->employer,
                     'equipement' => $history->equipement,
+                    'status' => $history->status,
                 ];
             });
        
@@ -69,6 +70,7 @@ class HistoryController extends Controller
 
     public function store(Request $request)
     {
+        
         try {
             // Validate input data
             $validated = $request->validate([
@@ -134,6 +136,7 @@ class HistoryController extends Controller
                 $equipement->status = "indisponible";
                 $equipement->update();
             }
+            $history->status = "en attente";
     
             // Set the employer id for the history
             $history->id_employer = $employer->id_employer;
@@ -186,15 +189,24 @@ class HistoryController extends Controller
      */
     public function update(Request $request, $id)
     {
+      
+        
         // Validate the incoming request
-        $validated = $request->validate([
-            'code' => 'required|string|',
-            'equipement' => 'required|string|',
-            'type' => 'required|string|',
-        ]);
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');  // Get the uploaded file
+            $path = $file->store('contracts', 'public');  // Store the file in the 'contracts' directory in 'public' storage
+    
+            // Save the file path to the database if needed
+            $history = History::findOrFail($id);
+            $history->file_path = $path;
+            $history->save();
+        } else {
+            return response()->json(['error' => 'File not found in the request'], 422);
+        }
 
         try{
 
+         
             
             $history = Hostory::find($id);
 

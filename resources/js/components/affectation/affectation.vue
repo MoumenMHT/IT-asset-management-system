@@ -189,6 +189,7 @@
                 <th>Employer</th>
                 <th>Eauipement</th>
                 <th>Créé à</th>
+                <th>Status</th>
                 <th>Mis à jour à</th>
                 <th>Action</th>
               </tr>
@@ -254,6 +255,9 @@
                 </v-autocomplete>
                   </td>
                   <td>
+                    {{ history.status }}
+                  </td>
+                  <td>
                     {{ history.created_at }}
                   </td>
                   <td>
@@ -283,6 +287,7 @@
                   <td>{{ history.type }}</td>
                   <td>{{ history.employer.code }}</td>
                   <td>{{ history.equipement.num_serie }}</td>
+                  <td>{{ history.status }}</td>
                   <td>{{ history.created_at }}</td>
                   <td>{{ history.updated_at }}</td>
 
@@ -294,6 +299,15 @@
                       Edit
                     </button>
                     &nbsp;
+                    <button @click="triggerFileInput(index, history.id)" class="btn btn-secondary btn-sm">
+                      Upload
+                    </button>
+                    <input
+                      type="file"
+                      :ref="'fileInput-' + index"
+                      style="display: none"
+                      @change="handleFileUpload"
+                    />
                     
                   </td>
                 </template>
@@ -317,6 +331,8 @@ export default {
 
   data() {
     return {
+      selectedFile: null, // Store the uploaded file
+      historyId: null, // Store the ID of the history for the file upload
       selectedEmployee: null,
       selectedEquipment: null, 
       selectedType: 'defaultType',
@@ -550,8 +566,77 @@ generatePdf(affectationId) {
                 console.error("Error fetching data:", error);
             });
     },
+     // Show file input and store the history ID
+     triggerFileInput(index, id) {
+    this.historyId = id; // Save the history ID
+    const fileInput = this.$refs[`fileInput-${index}`]; // Access the specific input by index
+
+    if (fileInput && fileInput.length > 0) {
+      fileInput[0].click(); // Trigger the file input (if it returns an array)
+    } else if (fileInput) {
+      fileInput.click(); // Trigger the file input directly
+    } else {
+      console.error("File input element not found or invalid.");
+    }
+  },
+
+    // Handle file selection
+    handleFileUpload(event) {
+      this.selectedFile = event.target.files[0]; // Get the selected file
+
+      if (this.selectedFile && this.historyId) {
+        this.uploadFile(this.historyId); // Proceed to upload the file
+      } else {
+        alert("Please select a file and ensure the history ID is valid.");
+      }
+    }, 
+
+    // Upload the file to the backend using Axios
+    async uploadFile(history) {
+  // Ensure history and history.id are valid
+  if (!history || !history) {
+    alert("History ID is missing!");
+    return;
+  }
+
+  // Ensure a file is selected
+  if (!this.selectedFile) {
+    alert("No file selected for upload!");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('file', this.selectedFile);
+
+  // Debugging: Log FormData entries
+  for (let [key, value] of formData.entries()) {
+    console.log(`${key}:`, value);
+  }
+
+  try {
+    const response = await axios.put(`/History/${history}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    console.log("File uploaded successfully:", response.data);
+    alert("File uploaded successfully!");
+  } catch (error) {
+    console.error("Error uploading file:", error.response?.data || error.message);
+    alert(`Error uploading file: ${error.response?.data?.error || error.message}`);
+  } finally {
+    this.selectedFile = null; // Reset the file input
+  }
+}
+
+
+
+
+
 
   },
+
 
   watch: {
   selectedType(newType) {

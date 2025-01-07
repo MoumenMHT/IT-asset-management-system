@@ -18,6 +18,7 @@ class CreateHistoryTable extends Migration
             $table->unsignedBigInteger('id_equipement');
             $table->unsignedBigInteger('id_employer');
             $table->String('type');
+            $table->String('status');
             $table->timestamps();
 
 

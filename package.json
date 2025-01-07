@@ -26,6 +26,7 @@
         "mitt": "^3.0.1",
         "vue": "^3.5.12",
         "vue-autocomplete": "^0.0.2",
+        "vue-chartjs": "^5.3.2",
         "vue-good-table-next": "^0.2.2",
         "vue-next-select": "^2.10.5",
         "vue-router": "^4.4.5",

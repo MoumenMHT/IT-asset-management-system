@@ -312,6 +312,7 @@
           structures: [], //Array to store structures
           fournisseurs: [], //Array to store fournisseurs
           contractsByType: [], // Array to store filtered equipment by contracts
+          typeCountsStructure: [],
 
 
         };
@@ -416,7 +417,12 @@
                       const count = this.equipments.filter(item => item.Type === type).length;
                       return { type, count };  // Return an object with the type and count
                     });
-                    
+
+                    this.typeCountsStructure = this.uniqueTypes.map(type => {
+                      // Count how many equipment items are of this type and have a status of 'indisponible'
+                      const count = this.equipments.filter(item => item.Type === type && item.status === 'indisponible').length;
+                      return { type, count }; // Return an object with the type and count
+                    });
 
                     
                     // Filter equipment where status is "disponible"
@@ -643,11 +649,15 @@ let labels ;
     labels = this.structures.filter(item => item.nom === type).map(structure => structure.nom);
     
     data = this.structures.filter(item => item.nom === type).map(structure => {
-    const count = this.IndisponibleEquipments.reduce((acc, item) => {
-      return item.employer.id_structure === structure.id ? acc + 1 : acc;
-    }, 0);
-    return count; // Return the count for this structure
-  });
+  const count = this.IndisponibleEquipments.reduce((acc, item) => {
+    // Ensure item.employer exists before accessing its properties
+    if (item.employer && item.employer.id_structure === structure.id) {
+      return acc + 1;
+    }
+    return acc; // Skip adding if employer is null or doesn't match
+  }, 0);
+  return count; // Return the count for this structure
+});
   }
   
   console.log('data',data);
@@ -695,7 +705,9 @@ StructureEuipmentTypeChart(structure) {
 
   let data;
   if(structure === 'All'){
-    data = this.typeCounts.map(item => item.count);
+    console.log('type', this.typeCountsStructure);
+    
+    data = this.typeCountsStructure.map(item => item.count);
   }else{
      data = labels.map((label) => {
     // Get the count of each equipment type for the given structure
@@ -757,7 +769,7 @@ ContractEquipmentDisponible(type) {
   const labels = this.contracts.map(structure => structure.ref);
   console.log('label ',labels);
   
-let data
+let data = 0;
   if(type ==='Indissponible'){
 
    data = this.contracts.map(contract => {
@@ -786,7 +798,7 @@ let data
       labels: labels, // Labels for the pie chart
       datasets: [
         {
-          label: "Nombre de contrat par structure", // Label for the dataset
+          label: "Nombre des equipement " + type +  " par contrat", // Label for the dataset
           data: data, // The contract counts for each structure
           backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
