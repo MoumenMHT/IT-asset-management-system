@@ -19,6 +19,7 @@ class CreateHistoryTable extends Migration
             $table->unsignedBigInteger('id_employer');
             $table->String('type');
             $table->String('status');
+            $table->String('path');
             $table->timestamps();
 
 

@@ -18,6 +18,7 @@ class Hostory extends Model
         'id_employer',
         'id_equipement',
         'status',
+        'path',
     ];
 
 

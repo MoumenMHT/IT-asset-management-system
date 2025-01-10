@@ -181,139 +181,128 @@
         <div class="card-body">
           <h5 class="card-title">All historys</h5>
           <div id="Table">
-           <table class="table datatable" ref="datatable">
-            <thead>
-              <tr>
-                <th>Num</th>
-                <th>Type</th>
-                <th>Employer</th>
-                <th>Eauipement</th>
-                <th>Créé à</th>
-                <th>Status</th>
-                <th>Mis à jour à</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Display message when no historys are available -->
-              <tr v-if="historys.length === 0">
-                <td colspan="7" class="text-center">No historys available.</td>
-              </tr>
+            <table class="table datatable" ref="datatable">
+  <thead>
+    <tr>
+      <th>Num</th>
+      <th>Type</th>
+      <th>Employer</th>
+      <th>Equipement</th>
+      <th>Status</th>
+      <th>Créé à</th>
+      <th>Mis à jour à</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Display message when no historys are available -->
+    <tr v-if="historys.length === 0">
+      <td colspan="7" class="text-center">No historys available.</td>
+    </tr>
 
-              <!-- Loop through historys -->
-              <tr v-for="(history, index) in historys" :key="history.id">
-                <!-- Editable Row -->
-                <template v-if="editRow === history.id">
-                  <td>{{ index + 1 }}</td>
-                  
-                  <td>
-                    <select class="form-select" aria-label="Default select example" v-model="editablehistory.type" >
-                      <option value="" disabled>{{history.type}}</option>
-                      <option  >affectation</option>
-                      <option  >desaffectation</option>
-                    </select>
-                  </td>
-                  <td>
-                    <v-autocomplete
-                    v-model="editablehistory.employer"
-                    :items="employes"
-                    item-title="code"
-                    label="Code"
-                    variant="outlined"
-                    return-object
-                    
-                    
-                  >
-                  <template v-slot:item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
-                      :title="item.raw.code"
-                    ></v-list-item>
-                  </template>
-               
-                  </v-autocomplete>
-                  </td>
-                
-                  
-                  <td>
-                    <v-autocomplete
-                    v-model="editablehistory.equipement"
-                    :items="filteredEquipments"
-                    item-title="num_serie"
-                    label="Num Serie"
-                    variant="outlined"
-                    return-object
-                  >
-                  <template v-slot:item="{ props, item }">
-                    <v-list-item
-                      v-bind="props"
-                      :subtitle="`Type: ${item.raw.Type} - Marque: ${item.raw.marque} - Etat: ${item.raw.etat} - Date D'amortissement: ${item.raw.date_amortissement}`"
-                      :title="item.raw.num_serie"
-                    ></v-list-item>
-                  </template>
-                </v-autocomplete>
-                  </td>
-                  <td>
-                    {{ history.status }}
-                  </td>
-                  <td>
-                    {{ history.created_at }}
-                  </td>
-                  <td>
-                    {{ history.updated_at }}
-                  </td>
-                  
-                  <td>
-                    <button
-                      @click="confirmEdit(history.id, index)"
-                      class="btn btn-success btn-sm"
-                    >
-                      Confirm
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="cancelEdit()"
-                      class="btn btn-secondary btn-sm"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </template>
+    <!-- Loop through historys -->
+    <tr v-for="(history, index) in historys" :key="history.id" :class="{'bg-light': history.status === 'en attente'}">
+      <!-- Editable Row -->
+      <template v-if="editRow === history.id">
+        <td>{{ index + 1 }}</td>
+        
+        <td>
+          <select class="form-select" aria-label="Default select example" v-model="editablehistory.type">
+            <option value="" disabled>{{history.type}}</option>
+            <option>affectation</option>
+            <option>desaffectation</option>
+          </select>
+        </td>
+        <td>
+          <v-autocomplete
+            v-model="editablehistory.employer"
+            :items="employes"
+            item-title="code"
+            label="Code"
+            variant="outlined"
+            return-object
+          >
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
+                :title="item.raw.code"
+              ></v-list-item>
+            </template>
+          </v-autocomplete>
+        </td>
+        
+        <td>
+          <v-autocomplete
+            v-model="editablehistory.equipement"
+            :items="filteredEquipments"
+            item-title="num_serie"
+            label="Num Serie"
+            variant="outlined"
+            return-object
+          >
+            <template v-slot:item="{ props, item }">
+              <v-list-item
+                v-bind="props"
+                :subtitle="`Type: ${item.raw.Type} - Marque: ${item.raw.marque} - Etat: ${item.raw.etat} - Date D'amortissement: ${item.raw.date_amortissement}`"
+                :title="item.raw.num_serie"
+              ></v-list-item>
+            </template>
+          </v-autocomplete>
+        </td>
+        <td>{{ history.status }}</td>
+        <td>{{ history.created_at }}</td>
+        <td>{{ history.updated_at }}</td>
+        
+        <td>
+          <button @click="confirmEdit(history.id, index)" class="btn btn-success btn-sm">
+            Confirm
+          </button>
+          &nbsp;
+          <button @click="cancelEdit()" class="btn btn-secondary btn-sm">
+            Cancel
+          </button>
+        </td>
+      </template>
 
-                <!-- Normal Row -->
-                <template v-else>
-                  <td>{{ index +1 }}</td>
-                  <td>{{ history.type }}</td>
-                  <td>{{ history.employer.code }}</td>
-                  <td>{{ history.equipement.num_serie }}</td>
-                  <td>{{ history.status }}</td>
-                  <td>{{ history.created_at }}</td>
-                  <td>{{ history.updated_at }}</td>
+      <!-- Normal Row -->
+      <template v-else>
+        <td>{{ index + 1 }}</td>
+        <td>{{ history.type }}</td>
+        <td>{{ history.employer.code }}</td>
+        <td>{{ history.equipement.num_serie }}</td>
+        <td>{{ history.status }}</td>
+        <td>{{ history.created_at }}</td>
+        <td>{{ history.updated_at }}</td>
 
-                  <td>
-                    <button
-                      @click="enableEdit(history)"
-                      class="btn btn-primary btn-sm"
-                    >
-                      Edit
-                    </button>
-                    &nbsp;
-                    <button @click="triggerFileInput(index, history.id)" class="btn btn-secondary btn-sm">
-                      Upload
-                    </button>
-                    <input
-                      type="file"
-                      :ref="'fileInput-' + index"
-                      style="display: none"
-                      @change="handleFileUpload"
-                    />
-                    
-                  </td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
+        <td>
+          <button @click="enableEdit(history)" class="btn btn-primary btn-sm">
+            Edit
+          </button>
+          &nbsp;
+          <!-- Show upload button only if status is 'en attente' -->
+          <button v-if="history.status === 'en attente'" @click="triggerFileInput(index, history)" class="btn btn-secondary btn-sm">
+            Upload
+          </button>
+          <button
+            v-else
+            class="btn btn-secondary btn-sm"
+            @click="downloadFile(`/storage/${history.path}`)">
+            Download
+          </button>
+          <input
+            type="file"
+            :ref="'fileInput-' + index"
+            style="display: none"
+            @change="handleFileUpload"
+          />
+        </td>
+      </template>
+    </tr>
+  </tbody>
+</table>
+
+
 
 
           </div>
@@ -567,8 +556,10 @@ generatePdf(affectationId) {
             });
     },
      // Show file input and store the history ID
-     triggerFileInput(index, id) {
-    this.historyId = id; // Save the history ID
+
+triggerFileInput(index, id) {
+  
+    this.historyId = id.id; // Save the history ID
     const fileInput = this.$refs[`fileInput-${index}`]; // Access the specific input by index
 
     if (fileInput && fileInput.length > 0) {
@@ -581,57 +572,61 @@ generatePdf(affectationId) {
   },
 
     // Handle file selection
-    handleFileUpload(event) {
-      this.selectedFile = event.target.files[0]; // Get the selected file
+    handleFileUpload(event, id) {
 
-      if (this.selectedFile && this.historyId) {
-        this.uploadFile(this.historyId); // Proceed to upload the file
-      } else {
-        alert("Please select a file and ensure the history ID is valid.");
+      id = this.historyId;
+      console.log('id',id);
+
+      const file = event.target.files[0]; // Get the selected file
+      if (!file) {
+        alert("No file selected!");
+        return;
       }
-    }, 
+
+      this.uploadFile(file, id);
+    },
 
     // Upload the file to the backend using Axios
-    async uploadFile(history) {
-  // Ensure history and history.id are valid
-  if (!history || !history) {
-    alert("History ID is missing!");
-    return;
+    async uploadFile(file, id) {
+  const reader = new FileReader();
+  
+  reader.onload = async (e) => {
+    const base64File = e.target.result;
+
+    try {
+      // Make PUT request with the correct payload
+      const response = await axios.put(`/History/${id}`, {
+        file: base64File, // Ensure "file" matches Laravel validation rule
+      });
+
+      console.log("File uploaded successfully:", response.data);
+      alert("File uploaded successfully!");
+    } catch (error) {
+      if (error.response && error.response.data) {
+        console.error("Error uploading file:", error.response.data);
+        alert(`File upload failed: ${error.response.data.message}`);
+      } else {
+        console.error("Error uploading file:", error);
+        alert("File upload failed!");
+      }
+    }
+  };
+
+  reader.onerror = (error) => {
+    console.error("Error converting file to Base64:", error);
+    alert("File processing failed!");
+  };
+
+  reader.readAsDataURL(file); // Read the file as Base64
+},
+downloadFile(filePath) {
+    const link = document.createElement('a');
+    link.href = filePath; // Use the relative URL
+    link.download = ''; // Let the browser handle the file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
-
-  // Ensure a file is selected
-  if (!this.selectedFile) {
-    alert("No file selected for upload!");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append('file', this.selectedFile);
-
-  // Debugging: Log FormData entries
-  for (let [key, value] of formData.entries()) {
-    console.log(`${key}:`, value);
-  }
-
-  try {
-    const response = await axios.put(`/History/${history}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    console.log("File uploaded successfully:", response.data);
-    alert("File uploaded successfully!");
-  } catch (error) {
-    console.error("Error uploading file:", error.response?.data || error.message);
-    alert(`Error uploading file: ${error.response?.data?.error || error.message}`);
-  } finally {
-    this.selectedFile = null; // Reset the file input
-  }
-}
-
-
-
 
 
 

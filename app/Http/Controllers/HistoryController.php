@@ -7,6 +7,8 @@ Use App\Models\Employer;
 Use App\Models\Equipment;
 Use App\Models\Hostory;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+
 
 
 
@@ -33,6 +35,7 @@ class HistoryController extends Controller
                     'employer' => $history->employer,
                     'equipement' => $history->equipement,
                     'status' => $history->status,
+                    'path' => $history->path,
                 ];
             });
        
@@ -190,64 +193,55 @@ class HistoryController extends Controller
     public function update(Request $request, $id)
     {
       
-        
-        // Validate the incoming request
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');  // Get the uploaded file
-            $path = $file->store('contracts', 'public');  // Store the file in the 'contracts' directory in 'public' storage
-    
-            // Save the file path to the database if needed
-            $history = History::findOrFail($id);
-            $history->file_path = $path;
-            $history->save();
-        } else {
-            return response()->json(['error' => 'File not found in the request'], 422);
-        }
+        $request->validate([
+            'file' => 'required|string', // Validate Base64 string
+        ]);
 
+    
         try{
 
-         
-            
             $history = Hostory::find($id);
 
-            if (!$history) {
+            if (!$history || $history->status === "confirmer") {
                 return response()->json([
-                    'message' => 'history not found.',
-                ], 200);
-            }
-            $equipement = Equipment::where('num_serie', $validated['equipement'])->first();
-            if (!$equipement) {
-                return response()->json(['message' => 'Eauipement not found!'], 200);
+                    'message' => 'history not found or alredy confirmed.',
+                ], 300);
             }
             
-
-            $history->id_equipement	 = $equipement->id_equipement;
-
-
-            $employer = Employer::where('code', $validated['code'])->first();
-            if (!$employer) {
-                return response()->json(['message' => 'Employer not found!'], 200);
-            }
             
 
-            if($validated['type'] === 'desaffectation') {
-                $equipement->status = 'disponible';
-                $equipement->update();
-            }
-
-            $history->id_employer	 = $employer->id_employer;
-
-            $history->type = $validated['type'];
+            $history->status = "confirmer";
 
 
-            // Update the history
-            $history->update($validated);
+            $base64File = $request->input('file');
 
-            // Return a success response
+            // Decode Base64 file
+            $fileData = explode(',', $base64File);
+            $fileContent = base64_decode($fileData[1]);
+            
+            // Get file extension
+            preg_match('/^data:(\w+\/\w+);base64,/', $base64File, $matches);
+            $extension = explode('/', $matches[1])[1] ?? 'txt';
+            
+            // Generate a unique file name
+            $fileName = $history->type . '_' . $history->employer->nom . '_' . $history->employer->prenom . '_' . $history->equipement->num_serie . '.' . $extension;
+            
+            // Save the file to the public storage directory
+            $filePath = 'uploads/' . $fileName;
+            Storage::disk('public')->put($filePath, $fileContent);
+            
+            // Store the relative URL in the database
+            $history->path = $filePath; // Save only the relative path
+            $history->update();
+            
             return response()->json([
-                'message' => 'history updated successfully.',
-                'history' => $history,
-            ],200);
+                'success' => true,
+                'message' => 'File uploaded successfully!',
+                'file_name' => $fileName,
+                'file_path' => '/storage/' . $filePath, // Return the public URL
+            ]);
+            
+     
         } catch (\Exception $e) {
             // Log the error for debugging
             \Log::error($e->getMessage());

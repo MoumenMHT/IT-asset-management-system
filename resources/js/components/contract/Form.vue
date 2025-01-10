@@ -153,7 +153,7 @@
                   <td>{{ index +1 }}</td>
                   <td>{{ contract.ref }}</td>
                   <td>{{ contract.fournisseur }}</td>
-                  <td>{{ contract.structure_nom }}</td>
+                  <td>{{ contract.structure }}</td>
                   <td>{{ contract.garantie }}</td>
                   <td>{{ contract.Type_contract }}</td>
                   <td>{{ contract.date_acquisition }}</td>
@@ -357,6 +357,7 @@ export default {
         .get("/structure/getStructure")
         .then((response) => {
           this.structures = response.data;
+          
           
         })
         .catch((error) => {
