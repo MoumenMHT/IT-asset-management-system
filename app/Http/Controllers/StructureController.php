@@ -7,6 +7,14 @@ use App\Models\structure;
 
 class StructureController extends Controller
 {
+
+
+    public function __construct()
+    {
+        
+        // Protect all methods in this controller except 'index' and 'show' (if they are public and don't require authentication)
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
     /**
      * Display a listing of the resource.
      *

@@ -377,7 +377,7 @@ export default {
 
     fetchHistorys() {
       axios
-        .get("/history/getHistory")
+        .get("/api/history/getHistory")
         .then((response) => {
           this.historys = response.data;
           
@@ -419,7 +419,7 @@ export default {
 
         if (data.employer && data.equipement) {
 
-          axios.post('/History', data)
+          axios.post('/api/History', data)
                 .then(response => {
                   if(response.data.message){
 
@@ -480,7 +480,7 @@ generatePdf(affectationId) {
         
 
         axios
-            .post(`/History`, updatedhistory)
+            .post(`/api/History`, updatedhistory)
             .then((response) => {
               
                 alert(response.data.message);
@@ -512,7 +512,7 @@ generatePdf(affectationId) {
     deletehistory(id, index) {
       if (confirm("Are you sure you want to delete this history?")) {
         axios
-          .delete(`/historyCrud/${id}`)
+          .delete(`/api/historyCrud/${id}`)
           .then((response) => {
             console.log(response);
             
@@ -528,7 +528,7 @@ generatePdf(affectationId) {
     getEmployer(){
         
       axios
-        .get("/employer/getEmployer")
+        .get("/api/employer/getEmployer")
         .then((response) => {
             
           this.employes = response.data;
@@ -543,8 +543,10 @@ generatePdf(affectationId) {
     },
     getEquipment() {       
         axios
-            .get("/equipment/getEquipment")
+            .get("/api/equipment/getEquipment")
             .then((response) => {
+              console.log(response);
+              
                 // Filter only available equipment
                 this.equipments = response.data.filter((item) => item.status === 'disponible');
                 
@@ -595,7 +597,7 @@ triggerFileInput(index, id) {
 
     try {
       // Make PUT request with the correct payload
-      const response = await axios.put(`/History/${id}`, {
+      const response = await axios.put(`/api/History/${id}`, {
         file: base64File, // Ensure "file" matches Laravel validation rule
       });
 

@@ -24,43 +24,11 @@ use App\Http\Controllers\PdfController;
 */
 
 
-Route::view('/signup', 'register');
-
-Route::post('/login', [UsersController::class, 'login']);
-Route::post('/users', [UsersController::class, 'create']);
-Route::post('/history/upload', [HistoryController::class, 'upload']);
-
-
 
 Route::get('/', function (){
     return view('index');
 });
 
-Route::get('/contracts/getContracts', [ContractsController::class, 'getContracts']);
-Route::get('/structure/getStructure', [StructureController::class, 'getStructures']);
-Route::get('/equipment/getEquipment', [EquipmentController::class, 'getEquipments']);
-Route::get('/provider/getProvider', [ProviderController::class, 'getProviders']);
-Route::get('/employer/getEmployer', [EmployerController::class, 'getEmployer']);
-Route::get('/user/getUser', [UsersController::class, 'getUser']);
-Route::get('/history/getHistory', [HistoryController::class, 'getHistory']);
-Route::post('/history/upload', [HistoryController::class, 'upload']);
-Route::get('/generate-pdf/{affectationId}', [PdfController::class, 'generatePdf'])->name('generate.pdf');
-
-
-
-
-Route::resource('equipment',EquipmentController::class);
-Route::resource('contract',ContractsController::class);
-Route::resource('provider',ProviderController::class);
-Route::resource('structure',StructureController::class);
-Route::resource('employe',EmployerController::class);
-Route::resource('userCrud',UsersController::class);
-Route::resource('History',HistoryController::class);
-
-
-
-
-Route::view('/welcome', 'welcome');
 
 Route::get('/{any}', function () {
     return view('app'); // Your main Blade file for Vue.js

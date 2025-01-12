@@ -7,32 +7,41 @@ use App\Models\Provider;
 
 class ProviderController extends Controller
 {
+
+    public function __construct()
+    {
+        
+        // Protect all methods in this controller except 'index' and 'show' (if they are public and don't require authentication)
+        $this->middleware('auth:sanctum')->except(['index', 'show']);
+    }
     
 
     public function getProviders()
     {
+
+
         try {
-            $provider = Provider::get();
-            $provider = $provider->map(function ($provider) {
+
+         
+
+            $providers = Provider::get();
+            
+            // Debug: Log the raw data before processing
+            
+            $providers = $providers->map(function ($provider) {
                 return [
-                    'id' => $provider->id_fournisseur, // Rename field
-                    'nom' => $provider->nom,        // Include other fields as needed
-                    // Add other fields you want to return
+                    'id' => $provider->id_fournisseur,
+                    'nom' => $provider->nom,
                 ];
             });
-        
-            if ($provider) {
-                // Return providers with a success message
-                return response()->json($provider, 200);
+            
+            if ($providers->isNotEmpty()) {
+                return response()->json($providers, 200);
             } else {
-                // Return a not found response
                 return response()->json(['status' => 'error', 'message' => 'No providers found'], 404);
             }
         } catch (\Exception $e) {
-            // Log the error for debugging
             \Log::error($e->getMessage());
-            
-            // Return a generic error response with appropriate status code
             return response()->json([
                 'status' => 'error',
                 'message' => 'An unexpected error occurred. Please try again later.'

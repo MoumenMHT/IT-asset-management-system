@@ -132,7 +132,7 @@ export default {
   methods: {
     fetchstructures() {
       axios
-        .get("/structure/getStructure")
+        .get("/api/structure/getStructure")
         .then((response) => {
           this.structures = response.data;
           console.log(response.data);
@@ -166,7 +166,7 @@ export default {
       console.log(this.form);
       
       axios
-        .post("/structure", this.form)
+        .post("/api/structure", this.form)
         .then(response => {
           console.log(response.data);
             alert('structure inserted successfully');
@@ -219,7 +219,7 @@ export default {
         
 
         axios
-            .put(`/structure/${id}`, updatedstructure)
+            .put(`/api/structure/${id}`, updatedstructure)
             .then((response) => {
               console.log(response);
               
@@ -239,7 +239,7 @@ export default {
     deletestructure(id, index) {
       if (confirm("Are you sure you want to delete this structure?")) {
         axios
-          .delete(`/structure/${id}`)
+          .delete(`/api/structure/${id}`)
           .then(() => {
             alert("structure deleted successfully");
             this.structures.splice(index, 1);
@@ -253,7 +253,7 @@ export default {
     getStructure(){
 
       axios
-        .get("/structure/getStructure")
+        .get("/api/structure/getStructure")
         .then((response) => {
           this.structures = response.data;
           

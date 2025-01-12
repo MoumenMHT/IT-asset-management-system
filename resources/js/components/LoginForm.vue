@@ -24,11 +24,15 @@
 
 <script>
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
 
 
 export default {
+  props: {
+  },
     data() {
         return {
+            isAuthenticated: false, 
             form: {
                 username: '',
                 password: '',
@@ -39,45 +43,44 @@ export default {
     methods: {
         
         submitForm() {
-            console.log(this.form);
+    console.log(this.form);
+
+    axios.post('/api/login', this.form)
+        .then(response => {
+            // Store token in localStorage
+            localStorage.setItem('auth_token', response.data.token);
+
+            // Update the authentication status
+            this.isAuthenticated = true;
+
+
+            console.log(response.data.user);
             
-            axios.post('/login', this.form)
-                .then(response => {
+            // Convert user data into a query string
+            const userData = JSON.stringify(response.data.user);
+            console.log(userData);
+            
+            const secretKey = "abdou"; // Use a secure key, stored safely
+            const encryptedData = CryptoJS.AES.encrypt(userData, secretKey).toString();
 
-                    
-                    
-                    // Handle successful registration
-                    
-                    alert('login succed successful!\n');
-                    console.log(response.data.user.name);
-                    
-                    
-                    window.location.href = '/app?name='+this.form.username;
-                })
-                .catch(error => {
-                    console.log(error.response.data);
-                    if (error.response.data.message === 'Email or password are wrong'){
-                        alert(error.response.data.message);
-                    }
+            console.log(encryptedData);
+            
 
-                    if (error.response && error.response.data) {
+       
 
-                        // If the error is from the backend, extract the error messages
-                        const errorMessages = error.response.data.errors;
-
-                        // Displaying the error messages as an alert
-                        let errorMessage = 'Error:\n';
-                        for (const [field, messages] of Object.entries(errorMessages)) {
-                            errorMessage += ` ${messages.join(', ')}\n`;
-                        }
-                        alert(errorMessage); // Show all the error messages
-                    } else {
-                        // If no specific error response, show a generic message
-                        alert('An error occurred while processing your request.');
-                        
-                    }
-                });
+            // Redirect to dashboard with user data in the URL
+            window.location.href = `/dashboard?data=${encodeURIComponent(encryptedData)}`;
+        })
+        .catch(error => {
+            console.log(error);
+            if (error.response && error.response.data.message === 'Invalid credentials.') {
+                alert(error.response.data.message);
+            } else {
+                alert('An error occurred while processing your request.');
+            }
+        });
 }
+
 
     },
 };

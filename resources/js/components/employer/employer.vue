@@ -209,7 +209,7 @@ export default {
   methods: {
     fetchemployers() {
       axios
-        .get("/employer/getEmployer")
+        .get("/api/employer/getEmployer")
         .then((response) => {
           this.employers = response.data;
           if(this.employer.user === null){
@@ -246,7 +246,7 @@ export default {
       console.log(this.form);
       
       axios
-        .post("/employe", this.form)
+        .post("/api/employe", this.form)
         .then(response => {
           console.log(response.data);
             alert('employer inserted successfully');
@@ -307,7 +307,7 @@ export default {
         
 
         axios
-            .put(`/employe/${id}`, updatedemployer)
+            .put(`/api/employe/${id}`, updatedemployer)
             .then((response) => {
               console.log(response);
               
@@ -330,7 +330,7 @@ export default {
     deleteemployer(id, index) {
       if (confirm("Are you sure you want to delete this employer?")) {
         axios
-          .delete(`/employe/${id}`)
+          .delete(`/api/employe/${id}`)
           .then(() => {
             alert("employer deleted successfully");
             this.employers.splice(index, 1);
@@ -344,7 +344,7 @@ export default {
     getStructure(){
 
       axios
-        .get("/structure/getStructure")
+        .get("/api/structure/getStructure")
         .then((response) => {
           this.structures = response.data;
           

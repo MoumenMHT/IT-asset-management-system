@@ -6,61 +6,114 @@
   
   <aside id="sidebar" class="sidebar">
 
-    <ul class="sidebar-nav" id="sidebar-nav">
+    <ul v-if="this.type === 'admin'" class="sidebar-nav" id="sidebar-nav">
 
       <li class="nav-item">
-        <router-link class="nav-link collapsed" :to="'/dashboard?name=' + name">
+        <router-link class="nav-link collapsed" :to="'/dashboard?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>Dashoard</span>
         </router-link>
       </li>
 
       <li class="nav-item">
-        <router-link class="nav-link collapsed" :to="'/structur?name=' + name">
+        <router-link class="nav-link collapsed" :to="'/structure?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>Structure</span>
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link collapsed" :to="'/app?name=' + name">
+        <router-link class="nav-link collapsed" :to="'/app?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>contract</span>
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link collapsed" :to="'/fournisseur?name=' + name">
+        <router-link class="nav-link collapsed" :to="'/fournisseur?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>Fournisseur </span>
         </router-link>
       </li>
 
       <li class="nav-item">
-        <router-link class="nav-link collapsed " :to="'/magazin?name=' + name">
+        <router-link class="nav-link collapsed " :to="'/magazin?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>Magasin</span>
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link collapsed " :to="'/affectation?name=' + name">
+        <router-link class="nav-link collapsed " :to="'/affectation?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>Affectation</span>
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link collapsed " :to="'/employer?name=' + name">
+        <router-link class="nav-link collapsed " :to="'/employer?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>Employer</span>
         </router-link>
       </li>
       <li class="nav-item">
-        <router-link class="nav-link collapsed " :to="'/user?name=' + name">
+        <router-link class="nav-link collapsed " :to="'/user?data=' + encodeURIComponent(encryptedData)">
           <i class="bi bi-grid"></i>
           <span>User</span>
         </router-link>
       </li>
       
+      
 
     </ul>
+    <ul v-else-if="this.type === 'worker'" class="sidebar-nav" id="sidebar-nav">
+
+<li class="nav-item">
+  <router-link class="nav-link collapsed" :to="'/dashboard?' ">
+    <i class="bi bi-grid"></i>
+    <span>Dashoard</span>
+  </router-link>
+</li>
+
+
+<li class="nav-item">
+  <router-link class="nav-link collapsed" :to="'/app?data=' + encodeURIComponent(encryptedData)">
+    <i class="bi bi-grid"></i>
+    <span>contract</span>
+  </router-link>
+</li>
+<li class="nav-item">
+  <router-link class="nav-link collapsed" :to="'/fournisseur?data=' + encodeURIComponent(encryptedData)">
+    <i class="bi bi-grid"></i>
+    <span>Fournisseur </span>
+  </router-link>
+</li>
+
+<li class="nav-item">
+  <router-link class="nav-link collapsed " :to="'/magazin?data=' + encodeURIComponent(encryptedData)">
+    <i class="bi bi-grid"></i>
+    <span>Magasin</span>
+  </router-link>
+</li>
+<li class="nav-item">
+  <router-link class="nav-link collapsed " :to="'/affectation?data=' + encodeURIComponent(encryptedData)">
+    <i class="bi bi-grid"></i>
+    <span>Affectation</span>
+  </router-link>
+</li>
+
+
+
+
+</ul>
+<ul v-else class="sidebar-nav" id="sidebar-nav">
+
+<li class="nav-item">
+  <router-link class="nav-link collapsed" :to="'/dashboard?data=' + encodeURIComponent(encryptedData)">
+    <i class="bi bi-grid"></i>
+    <span>Dashoard</span>
+  </router-link>
+</li>
+
+
+
+</ul>
 
   </aside>
   <!-- End Sidebar-->
@@ -98,20 +151,69 @@
 </template>
 
 <script>
+import CryptoJS from 'crypto-js';
+
+
+
 export default {
 
   
     name: 'App',
     data() {
         return {
-            name: '',
+          username: '',
+          type: '',
+          encryptedData:'',
+          notifications: [],
+
         };
     },
-    mounted() {
-        // Retrieve the 'name' query parameter from the URL without using Vue Router
-        const queryParams = new URLSearchParams(window.location.search);
-        this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
-    },
+      mounted() {
+   
+        // Get the encrypted query parameter
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        let encryptedData = urlParams.get('data');
+        
+
+        if (encryptedData) {
+            try {
+                // Decrypt the data
+                const secretKey = "abdou";
+                const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+                const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+                // Access the decrypted values
+                console.log('Decrypted User Data:', decryptedData);
+                const {  username, Type } = decryptedData;
+                
+
+                this.username = username;
+                this.type = Type;
+
+
+                const userData = JSON.stringify(decryptedData);
+                encryptedData = CryptoJS.AES.encrypt(userData, secretKey).toString();
+                this.encryptedData = encryptedData;
+
+
+            } catch (error) {
+                console.error('Failed to decrypt data:', error);
+            }
+
+            axios.get('/api/notifications')
+            .then(response => {
+                this.notifications = response.data;
+                console.log('here', response);
+            
+            })
+            .catch((error) => {
+            console.log(error);
+        });
+        }
+
+      
+      },
 
         
 };

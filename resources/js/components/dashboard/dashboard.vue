@@ -318,10 +318,11 @@
         };
       },
       mounted() {
-        this. getContract();
+        
+        this.getFournisseur();
+        this.getContract();
         this.getEquipment();
         this.getStructure();
-        this.getFournisseur();
 
 
 
@@ -352,7 +353,7 @@
         getStructure(){
 
           axios
-            .get("/structure/getStructure")
+            .get("/api/structure/getStructure")
             .then((response) => {
               this.structures = response.data;
               console.log('structures',this.structures);
@@ -361,33 +362,58 @@
               
             })
             .catch((error) => {
-              console.error("Error fetching data:", error.data);
+              console.error("Error fetching data:", error);
             });
 
         },
-        getFournisseur(){
+        getFournisseur() {
+    // Retrieve the token from localStorage or sessionStorage
+    const token = localStorage.getItem('auth_token'); // Adjust this based on where you store the token
 
+
+// Log the token to the console
+console.log('Token contract :', token)
           axios
-            .get("/provider/getProvider")
-            .then((response) => {
-              this.fournisseurs = response.data;
+            .get("/api/provider/getProvider", {
+            headers: {
+                'Authorization': `Bearer ${token}` // Use template literals correctly
+            },
+            withCredentials: true
+        })
+        .then((response) => {
+            this.fournisseurs = response.data; // Update based on actual response structure
+            console.log('Provider data:', response);
+        })
+        .catch((error) => {
+            if (error.response) {
+                console.error("Server responded with an error:", error.response.data);
+            } else if (error.request) {
+                console.error("No response received:", error.request);
+            } else {
+                console.error("Error setting up request:", error.message);
+            }
+        });
+},
 
-              
-              
-            })
-            .catch((error) => {
-              console.error("Error fetching data:", error.data);
-            });
 
-        },
         getContract(){
 
+          // Retrieve the token from localStorage or sessionStorage
+    const token = localStorage.getItem('auth_token'); // Adjust this based on where you store the token
+
+// Log the token to the console
+console.log('Token contract :', token)
           axios
-            .get("/contracts/getContracts")
+            .get("/api/contracts/getContracts", {
+            headers: {
+                'Authorization': `Bearer ${token}` // Use template literals correctly
+            },
+            withCredentials: true
+        })
             .then((response) => {
               this.contracts = response.data;
               this.allContracts = response.data;
-              console.log(this.allContracts);
+              console.log('contract',response);
               
                          
               
@@ -400,7 +426,7 @@
        
         getEquipment() {       
             axios
-                .get("/equipment/getEquipment")
+                .get("/api/equipment/getEquipment")
                 .then((response) => {
                     // Filter only available equipment
                     this.equipments = response.data;

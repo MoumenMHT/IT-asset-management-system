@@ -43,6 +43,8 @@ register.mount('#app'); // Mount Vue app to the #app div
 const login = createApp(LoginForm);
 login.component('login-form', LoginForm); // Register LoginForm component globally
 login.mount('#login'); // Mount Vue app to the #login div
+login.use(router); // Use the router
+
 
 // Create Vue app for GetName form
 const getName = createApp(GetName);

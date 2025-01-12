@@ -13,6 +13,22 @@ class UsersController extends Controller
   
 
 
+
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->except(['login', 'store', 'checkAuth']);
+    }
+
+    public function checkAuth(Request $request)
+{
+    // This will return 'authenticated' as true if the user is logged in
+    return response()->json([
+        'authenticated' => Auth::check(),
+    ], 200);
+}
+    
+
+
     public function getUser()
     {
         try {
@@ -103,8 +119,8 @@ class UsersController extends Controller
     
             $user->username = $validated['username'];
             $user->type = $validated['type'];
-            $user->password = hash('md5',$validated['password']);
-            $user->save();
+            $user->password = Hash::make($validated['password']); // Hash the password
+                $user->save();
     
             $employer->id_user = $user->id_user;
             $employer->save();
@@ -232,26 +248,33 @@ class UsersController extends Controller
     //Login Function
     public function login(Request $request)
     {
-
-        // Validate the incoming data
-        $validated = $request->validate([
-            'username' => 'required|string|',
-            'password' => 'required|string|',
+        // Validate the incoming request data
+        $credentials = $request->validate([
+            'username' => 'required|string', // Change to 'email' if you're using email
+            'password' => 'required|string',
         ]);
-        
-        // Check if the user exists
-        $user = User::where('username', $validated['username'])->first();
-       
-        if ($user && hash('md5',$validated['password']) === $user->password) {
-
-            // Password matches
-            return response()->json(['message' => 'You loged in s successfully!','user'=>$user]);
+    
+        // Attempt to authenticate the user
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+    
+            // Generate a token for the user using Sanctum
+            $token = $user->createToken('authToken')->plainTextToken;
+    
+            return response()->json([
+                'message' => 'Login successful.',
+                'token' => $token,
+                'authenticated' => true,
+                'user' => $user->only(['id_user', 'username', 'Type']),
+            ], 200);
         } else {
-
-            // Invalid credentials
-            return response()->json(['message' => 'Email or password are wrong'], 300);
+            return response()->json([
+                'message' => 'Invalid credentials.',
+                'authenticated' => false,
+            ], 401);
         }
-
     }
+    
+
     
 }

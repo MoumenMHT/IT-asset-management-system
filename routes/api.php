@@ -1,19 +1,48 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\ContractsController;
+use App\Http\Controllers\StructureController;
+use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\ProviderController;
+use App\Http\Controllers\EmployerController;
+use App\Http\Controllers\HistoryController;
+use App\Http\Controllers\PdfController;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
+// Public Routes
+Route::post('/login', [UsersController::class, 'login']);
+Route::post('/signup', [UsersController::class, 'store']); // Changed to 'store' for standard RESTful practices
+Route::get('/check-auth', [UsersController::class, 'checkAuth']);
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Protected API routes
+Route::middleware('auth:sanctum')->group(function () {
+
+
+
+    Route::get('/provider/getProvider', [ProviderController::class, 'getProviders']);
+
+    
+    
+
+    Route::get('/contracts/getContracts', [ContractsController::class, 'getContracts']);
+    Route::get('/structure/getStructure', [StructureController::class, 'getStructures']);
+    Route::get('/equipment/getEquipment', [EquipmentController::class, 'getEquipments']);
+    Route::get('/employer/getEmployer', [EmployerController::class, 'getEmployer']);
+    Route::get('/user/getUser', [UsersController::class, 'getUser']);
+    Route::get('/history/getHistory', [HistoryController::class, 'getHistory']);
+    Route::get('/notifications', [NotificationController::class, 'index']);
+
+
+      
+    Route::resource('equipment',EquipmentController::class);
+    Route::resource('contract',ContractsController::class);
+    Route::resource('provider',ProviderController::class);
+    Route::resource('structure',StructureController::class);
+    Route::resource('employe',EmployerController::class);
+    Route::resource('userCrud',UsersController::class);
+    Route::resource('History',HistoryController::class);
+
+    // PDF generation
+    Route::get('/generate-pdf/{affectationId}', [PdfController::class, 'generatePdf'])->name('generate.pdf');
 });

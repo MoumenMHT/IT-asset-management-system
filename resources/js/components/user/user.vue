@@ -31,8 +31,9 @@
                   <label class="form-label">Select employes</label>                 
                     <select class="form-select" aria-label="Default select example" v-model="form.type" >
                       <option value="" disabled>Select a Type</option>
-                      <option  >jfkjoih</option>
-                      <option  >kkkk</option>
+                      <option  >admin</option>
+                      <option  >worker</option>
+                      <option  >viewer</option>
                     </select>  
             </div>
             
@@ -194,7 +195,7 @@ export default {
     
     fetchUsers() {
       axios
-        .get("/user/getUser")
+        .get("/api/user/getUser")
         .then((response) => {
           this.users = response.data;
           
@@ -227,7 +228,7 @@ export default {
     },
       submitForm() {
             
-            axios.post('/userCrud', this.form)
+            axios.post('/api/userCrud', this.form)
                 .then(response => {
                     // Handle successful registration
                     alert(response.data.message);
@@ -258,7 +259,7 @@ export default {
         
 
         axios
-            .put(`/userCrud/${id}`, updateduser)
+            .put(`/api/userCrud/${id}`, updateduser)
             .then((response) => {
               
             alert(response.data.message);
@@ -283,7 +284,7 @@ export default {
     deleteuser(id, index) {
       if (confirm("Are you sure you want to delete this user?")) {
         axios
-          .delete(`/userCrud/${id}`)
+          .delete(`/api/userCrud/${id}`)
           .then((response) => {
             console.log(response);
             
@@ -299,10 +300,13 @@ export default {
     getEmployer(){
         
       axios
-        .get("/employer/getEmployer")
+        .get("/api/employer/getEmployer")
         .then((response) => {
             
           this.employes = response.data;
+
+          console.log(response);
+          
           
         })
         .catch((error) => {

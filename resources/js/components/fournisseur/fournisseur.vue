@@ -132,7 +132,7 @@ export default {
   methods: {
     fetchfournisseurs() {
       axios
-        .get("/provider/getProvider")
+        .get("/api/provider/getProvider")
         .then((response) => {
           this.fournisseurs = response.data;
           console.log(response.data);
@@ -166,7 +166,7 @@ export default {
       console.log(this.form);
       
       axios
-        .post("/provider", this.form)
+        .post("/api/provider", this.form)
         .then(response => {
           console.log(response.data);
             alert('Fournisseur inserted successfully');
@@ -219,7 +219,7 @@ export default {
         
 
         axios
-            .put(`/provider/${id}`, updatedfournisseur)
+            .put(`/api/provider/${id}`, updatedfournisseur)
             .then((response) => {
               console.log(response);
               
@@ -239,7 +239,7 @@ export default {
     deletefournisseur(id, index) {
       if (confirm("Are you sure you want to delete this fournisseur?")) {
         axios
-          .delete(`/provider/${id}`)
+          .delete(`/api/provider/${id}`)
           .then(() => {
             alert("fournisseur deleted successfully");
             this.fournisseurs.splice(index, 1);
@@ -253,7 +253,7 @@ export default {
     getStructure(){
 
       axios
-        .get("/structure/getStructure")
+        .get("/api/structure/getStructure")
         .then((response) => {
           this.structures = response.data;
           

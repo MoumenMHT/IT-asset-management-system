@@ -21,6 +21,7 @@
         "@mdi/font": "^7.4.47",
         "apexcharts": "^4.3.0",
         "chart.js": "^4.4.7",
+        "crypto-js": "^4.2.0",
         "datatables.net": "^2.1.8",
         "datatables.net-bs5": "^2.1.8",
         "mitt": "^3.0.1",

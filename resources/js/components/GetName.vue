@@ -5,6 +5,9 @@
 </template>
 
 <script>
+
+import CryptoJS from 'crypto-js';
+
 export default {
     data() {
         return {
@@ -12,9 +15,34 @@ export default {
         };
     },
     mounted() {
-        // Retrieve the 'name' query parameter from the URL without using Vue Router
-        const queryParams = new URLSearchParams(window.location.search);
-        this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
+          // Get the encrypted query parameter
+          const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        let encryptedData = urlParams.get('data');
+        
+
+        if (encryptedData) {
+            try {
+                // Decrypt the data
+                const secretKey = "abdou";
+                const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+                const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+                // Access the decrypted values
+                console.log('Decrypted User Data:', decryptedData);
+                const {  username } = decryptedData;
+                
+
+                this.name = username;
+
+
+               
+
+
+            } catch (error) {
+                console.error('Failed to decrypt data:', error);
+            }
+        }
     },
     
 }

@@ -224,8 +224,18 @@ export default {
   },
   methods: {
     fetchContracts() {
+      // Retrieve the token from localStorage or sessionStorage
+    const token = localStorage.getItem('auth_token'); // Adjust this based on where you store the token
+
+// Log the token to the console
+console.log('Token:', token);
       axios
-        .get("/contracts/getContracts")
+        .get("/api/contracts/getContracts", {
+            headers: {
+                'Authorization': `Bearer ${token}` // Use template literals correctly
+            },
+            withCredentials: true
+        })
         .then((response) => {
           this.contracts = response.data;
           
@@ -261,7 +271,7 @@ export default {
       console.log(this.form);
       
       axios
-        .post("/contract", this.form)
+        .post("/api/contract", this.form)
         .then(response => {
           console.log(response);
             alert('Contract inserted successfully');
@@ -320,7 +330,7 @@ export default {
         
 
         axios
-            .put(`/contract/${id}`, updatedContract)
+            .put(`/api/contract/${id}`, updatedContract)
             .then((response) => {
               console.log(response);
               
@@ -340,7 +350,7 @@ export default {
     deleteContract(id, index) {
       if (confirm("Are you sure you want to delete this contract?")) {
         axios
-          .delete(`/contract/${id}`)
+          .delete(`/api/contract/${id}`)
           .then(() => {
             alert("Contract deleted successfully");
             this.contracts.splice(index, 1);
@@ -352,11 +362,23 @@ export default {
       }
     },
     getStructure(){
+      // Retrieve the token from localStorage or sessionStorage
+    const token = localStorage.getItem('auth_token'); // Adjust this based on where you store the token
+
+// Log the token to the console
+console.log('Token:', token);
 
       axios
-        .get("/structure/getStructure")
+        .get("/api/structure/getStructure", {
+            headers: {
+                'Authorization': `Bearer ${token}` // Use template literals correctly
+            },
+            withCredentials: true
+        })
         .then((response) => {
           this.structures = response.data;
+          console.log('structure ', response);
+          
           
           
         })
@@ -368,7 +390,7 @@ export default {
     getFournisseur(){
 
       axios
-        .get("/provider/getProvider")
+        .get("/api/provider/getProvider")
         .then((response) => {
           this.fournisseurs = response.data;
           
