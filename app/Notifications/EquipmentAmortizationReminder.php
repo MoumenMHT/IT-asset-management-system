@@ -40,6 +40,7 @@ class EquipmentAmortizationReminder extends Notification
 
         return [
             'message' => 'The equipment "' . $this->equipment->num_serie . '" is nearing its amortization date.',
+            'num_serie' => $this->equipment->num_serie,
             'equipment_id' => $this->equipment->id_equipement,
             'date_amortissement' => $this->equipment->date_amortissement,
         ];

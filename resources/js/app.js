@@ -21,6 +21,7 @@ import { createApp } from 'vue';  // Use Vue 3's `createApp`
 import RegisterForm from './components/RegisterForm.vue'; // Import RegisterForm
 import LoginForm from './components/LoginForm.vue'; // Import LoginForm
 import GetName from './components/GetName.vue'; // Import GetName
+import Notification from './components/notification.vue'; // Import Notification
 import App from './components/App.vue'; // Import App component
 import router from './router.js';  // Import router
 
@@ -50,6 +51,11 @@ login.use(router); // Use the router
 const getName = createApp(GetName);
 getName.component('user-name', GetName); // Register GetName component globally
 getName.mount('#UserName'); // Mount Vue app to the #UserName div
+
+
+const notification = createApp(Notification);
+notification.component('notification-div', Notification); 
+notification.mount('#Notification'); // Mount Vue app to the #UserName div
 
 // Create the main app instance
 const app = createApp(App);

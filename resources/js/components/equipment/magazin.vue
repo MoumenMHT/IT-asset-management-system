@@ -96,6 +96,7 @@
                     <td>
                       <select class="form-select" aria-label="Default select example" v-model="editableContract.contract" >
                         <option value="" disabled>Select a Contract</option>
+                        
                         <option v-for="contract in contracts" :key="contract.id" :value="contract.ref" >
                             {{ contract.ref }}
                         </option>
