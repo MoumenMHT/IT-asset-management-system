@@ -181,4 +181,19 @@ export default {
     form .text h3 a:hover{
     text-decoration: underline;
     }
+    @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+font-family: 'Poppins', sans-serif;
+}
+body{
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+background: #5781f4;
+}
 </style>
+

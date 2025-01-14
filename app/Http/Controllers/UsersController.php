@@ -274,6 +274,25 @@ class UsersController extends Controller
             ], 401);
         }
     }
+
+    public function logout(Request $request)
+    {
+        try {
+            // Log the user out of the current session
+            Auth::guard('web')->logout();
+
+            // Invalidate the session
+            $request->session()->invalidate();
+
+            // Regenerate the CSRF token
+            $request->session()->regenerateToken();
+
+            return response()->json(['message' => 'Logged out successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Logout failed: ' . $e->getMessage()], 500);
+        }
+    }
+
     
 
     

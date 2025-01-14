@@ -43,14 +43,14 @@ router.beforeEach((to, from, next) => {
 
     if (to.meta.requiresAuth && !data.authenticated) {
 
-      next('/');
+      window.location.href = `/`;
     } else {
       next();
     }
   })
   .catch(() => {
     if (to.meta.requiresAuth) {
-      next('/login');
+      window.location.href = `/`;
     } else {
       next();
     }

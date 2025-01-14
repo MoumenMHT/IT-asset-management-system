@@ -221,7 +221,7 @@ export default {
   methods: {
     fetchEquipments() {
       axios
-        .get("/equipment/getEquipment")
+        .get("/api/equipment/getEquipment")
         .then((response) => {
           this.equipments = response.data || []; 
           console.log(response);
@@ -248,7 +248,7 @@ export default {
     submitForm() {
       
       axios
-        .post("/equipment", this.form)
+        .post("/api/equipment", this.form)
         .then(response => {
           
             alert('Equipment inserted successfully');
@@ -303,7 +303,7 @@ export default {
         
 
         axios
-            .put(`/equipment/${id}`, updatedEquipment)
+            .put(`/api/equipment/${id}`, updatedEquipment)
             .then(() => {
             alert("Contract updated successfully");
             this.equipments[index] = { ...updatedEquipment }; 
@@ -321,7 +321,7 @@ export default {
     deleteContract(id, index) {
       if (confirm("Are you sure you want to delete this contract?")) {
         axios
-          .delete(`/equipment/${id}`)
+          .delete(`/api/equipment/${id}`)
           .then((response) => {
             alert("Contract deleted successfully");
             this.equipments.splice(index, 1);
@@ -335,7 +335,7 @@ export default {
     getContract(){
 
       axios
-        .get("/contracts/getContracts")
+        .get("/api/contracts/getContracts")
         .then((response) => {
           this.contracts = response.data;
           console.log(this.contracts);
@@ -351,7 +351,7 @@ export default {
     getFournisseur(){
 
       axios
-        .get("/provider/getProvider")
+        .get("/api/provider/getProvider")
         .then((response) => {
           this.fournisseurs = response.data;
           

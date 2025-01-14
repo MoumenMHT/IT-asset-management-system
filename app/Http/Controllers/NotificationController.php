@@ -15,6 +15,7 @@ class NotificationController extends Controller
     
     public function index()
     {
+
         return auth()->user()->notifications; // Fetch all notifications for the user
     }
 }

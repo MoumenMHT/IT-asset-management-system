@@ -57,7 +57,6 @@
                 <th>Fonctionnement</th>
                 <th>Code</th>
                 <th>Structure</th>
-                <th>User</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -113,9 +112,7 @@
                       </option>
                     </select>
                   </td>
-                  <td>
-                    {{ employer.user ?? 'null'}}
-                  </td>
+                  
 
                   <td>
                     <button
@@ -142,7 +139,6 @@
                   <td>{{ employer.fonc }}</td>
                   <td>{{ employer.code }}</td>
                   <td>{{ employer.structure }}</td>
-                  <td>{{ employer.user ?? 'null' }}</td>
                   <td>
                     <button
                       @click="enableEdit(employer)"
@@ -195,7 +191,6 @@ export default {
         fonc: "",
         code: "",
         structure: "",
-        user: "",
       }, // To temporarily store the editable employer data
     };
   },
@@ -212,9 +207,7 @@ export default {
         .get("/api/employer/getEmployer")
         .then((response) => {
           this.employers = response.data;
-          if(this.employer.user === null){
-            this.employer.user = 'null';
-          }
+          
           console.log(response.data);
           if(this.employers){
             this.$nextTick(() => {
@@ -261,7 +254,6 @@ export default {
                 this.form.fonc,
                 this.form.code,
                 this.form.structure,
-                this.form.user,     
                 `
                     <button
                         @click="enableEdit(employer)"
@@ -297,9 +289,7 @@ export default {
     },
     confirmEdit(id, index) {
         const updatedemployer = this.editableemployer;
-        if(updatedemployer.user === 'null'){
-           updatedemployer.user = '';
-        }
+        
         console.log('Updated employer Before Sending:', updatedemployer);
         console.log(index);
         console.log(id);

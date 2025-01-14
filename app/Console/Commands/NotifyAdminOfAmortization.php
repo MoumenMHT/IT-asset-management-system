@@ -15,8 +15,10 @@ class NotifyAdminOfAmortization extends Command
 
     public function handle()
     {
+
+        
         // Find equipment with amortization date one month from now and not notified
-        $equipment = Equipment::whereDate('date_amortissement', '=', Carbon::now()->addMonth()->toDateString())
+        $equipment = Equipment::whereDate('date_amortissement', '<=', Carbon::now()->addMonth()->toDateString())
             ->where('notified', false)
             ->get();
 
@@ -34,8 +36,9 @@ class NotifyAdminOfAmortization extends Command
                 $admin->notify(new EquipmentAmortizationReminder($item));
             }
 
+            $item->notified = true ;
             // Mark the equipment as notified
-            $item->update(['notified' => true]);
+            $item->update();
         }
 
         $this->info('Notifications sent successfully.');

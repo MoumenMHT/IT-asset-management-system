@@ -9,11 +9,14 @@ use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\NotificationController;
+
 
 // Public Routes
 Route::post('/login', [UsersController::class, 'login']);
 Route::post('/signup', [UsersController::class, 'store']); // Changed to 'store' for standard RESTful practices
 Route::get('/check-auth', [UsersController::class, 'checkAuth']);
+
 
 // Protected API routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -22,7 +25,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/provider/getProvider', [ProviderController::class, 'getProviders']);
 
-    
+    Route::post('/logout', [UsersController::class, 'logout']);
+
     
 
     Route::get('/contracts/getContracts', [ContractsController::class, 'getContracts']);
@@ -44,5 +48,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('History',HistoryController::class);
 
     // PDF generation
-    Route::get('/generate-pdf/{affectationId}', [PdfController::class, 'generatePdf'])->name('generate.pdf');
 });

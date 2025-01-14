@@ -37,9 +37,10 @@ class EquipmentAmortizationReminder extends Notification
     
     public function toDatabase($notifiable)
     {
+
         return [
-            'message' => 'The equipment "' . $this->equipment->name . '" is nearing its amortization date.',
-            'equipment_id' => $this->equipment->id,
+            'message' => 'The equipment "' . $this->equipment->num_serie . '" is nearing its amortization date.',
+            'equipment_id' => $this->equipment->id_equipement,
             'date_amortissement' => $this->equipment->date_amortissement,
         ];
     }
