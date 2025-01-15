@@ -17,6 +17,8 @@ class Kernel extends ConsoleKernel
     {
 
         $schedule->command('notify:amortization')->daily();
+        $schedule->command('notify:contractGarantie')->daily();
+
     }
 
     /**

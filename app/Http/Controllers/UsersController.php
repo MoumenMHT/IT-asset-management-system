@@ -16,7 +16,7 @@ class UsersController extends Controller
 
     public function __construct()
     {
-        $this->middleware('auth:sanctum')->except(['login', 'store', 'checkAuth']);
+        $this->middleware('auth:sanctum')->except(['login', 'checkAuth']);
     }
 
     public function checkAuth(Request $request)
