@@ -53,6 +53,7 @@ class EquipmentController extends Controller
                     'contractRef' => $equipment->contract->ref ?? null, // Safely get the contract reference
                     'fournisseur' => $equipment->contract->fournisseur->nom ?? null, // Safely get fournisseur name
                     'employer' => $equipment->employer ?? null,
+                    'structure' => $equipment->employer->structure->nom ?? null,
                 ];
             });
        

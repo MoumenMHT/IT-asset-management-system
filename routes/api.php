@@ -36,6 +36,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/getUser', [UsersController::class, 'getUser']);
     Route::get('/history/getHistory', [HistoryController::class, 'getHistory']);
     Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy']);
+
 
 
       

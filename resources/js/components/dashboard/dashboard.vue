@@ -1,9 +1,9 @@
 <template>
   <div class="row">
-    <div class="col-lg-8">
+    <div class="col-lg-6">
       <div class="row">
         <!-- eqipement dissponible Card -->
-        <div class="col-xxl-6 col-md-6">
+        <div class="col-xxl-12 col-md-6">
           <div class="card info-card sales-card">
             
             <div class="card-body">
@@ -39,44 +39,10 @@
             </div>
           </div>
         </div>
+       
         <!-- end eqipement dissponible Card -->
         <!-- eqipement indissponible Card -->
-        <div class="col-xxl-6 col-md-6">
-          <div class="card info-card sales-card">
-            
-            <div class="card-body">
-              <div class="filter">
-                <a class="icon" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>
-                      <a class="dropdown-item" @click="filterEquepmentByType('All','indisponible')">All</a>
-                    </h6>
-                  </li>
-                  <li v-for="(type, index) in uniqueTypes" :key="index">
-                    <a class="dropdown-item" @click="filterEquepmentByType(type,'indisponible')">
-                      {{ type }}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <h5 class="card-title">Equipement <span>| Indissponible</span></h5>
-              <div class="d-flex align-items-center">
-                <div
-                  class="card-icon rounded-circle d-flex align-items-center justify-content-center"
-                >
-                  <i class=" ri-computer-line"></i>
-                </div>
-                <div class="ps-3">
-                  <h6>{{indisponibleCount}}</h6>
-
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+       
         
         <!-- end eqipement indissponible Card -->
 
@@ -201,7 +167,45 @@
 
             
     </div>
-    <div class="col-lg-4">
+    
+        
+    <div class="col-lg-6">
+      <div class="col-xxl-12 col-md-6">
+          <div class="card info-card sales-card">
+            
+            <div class="card-body">
+              <div class="filter">
+                <a class="icon" data-bs-toggle="dropdown">
+                  <i class="bi bi-three-dots"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>
+                      <a class="dropdown-item" @click="filterEquepmentByType('All','indisponible')">All</a>
+                    </h6>
+                  </li>
+                  <li v-for="(type, index) in uniqueTypes" :key="index">
+                    <a class="dropdown-item" @click="filterEquepmentByType(type,'indisponible')">
+                      {{ type }}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <h5 class="card-title">Equipement <span>| Indissponible</span></h5>
+              <div class="d-flex align-items-center">
+                <div
+                  class="card-icon rounded-circle d-flex align-items-center justify-content-center"
+                >
+                  <i class=" ri-computer-line"></i>
+                </div>
+                <div class="ps-3">
+                  <h6>{{indisponibleCount}}</h6>
+
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       <div class="card">
         
 
@@ -269,10 +273,26 @@
         
 
     </div>
-    
-    
-    <!-- Sidebar Content -->
+
   </div>
+        
+  <div class="card recent-sales overflow-auto">
+
+<div class="card-body">
+          <h5 class="card-title">Contracts Table</h5>
+
+          <vue-good-table
+            :columns="columnsEquipmentEmployer"
+            :rows="equipments"
+            :pagination-options="{ enabled: true }"
+            :search-options="{ enabled: true }"
+          />
+
+  </div>
+</div>
+
+
+
 </template>
 
     <script>
@@ -282,6 +302,21 @@
     export default {
       data() {
         return {
+
+          columnsEquipmentEmployer: [
+        { label: 'Num Serie', field: 'num_serie' },
+        { label: 'Type', field: 'Type' },
+        { label: 'Date Amortissement', field: 'date_amortissement' },
+        { label: 'Etat', field: 'etat' },
+        { label: 'Status', field: 'status' },
+        { label: 'Employer Code', field: 'employer.code' },
+        { label: 'Employer Prenom', field: 'employer.prenom' },
+        { label: 'Employer Name', field: 'employer.nom' },
+        { label: 'Fonctionnement', field: 'employer.fonc' },
+        { label: 'Structure', field: 'structure' },
+
+      ], // Define table columns
+
           columns: [
         { label: 'Num', field: 'id' },
         { label: 'Contract Reference', field: 'ref' },
@@ -857,12 +892,21 @@ let data = 0;
       },
     }
       
-    </script>
+</script>
 
 <style scoped>
 .chart-container {
-  position: relative;
-  width: 100%; /* Make the chart take up the full width */
-  margin: auto; /* Center the chart container */
-}
+      width: 100%;
+      max-width: 600px; /* Set a max-width */
+      height: 400px; /* Set a fixed height */
+      margin: 0 auto; /* Center the container */
+    }
+    #StructureEuipmentType {
+      width: 100%; /* Make the canvas fill the container */
+      height: 100%;
+    }
+    #ContractEquipmentDisponibleChart{
+      width: 100%; /* Make the canvas fill the container */
+      height: 100%;
+    }
 </style>

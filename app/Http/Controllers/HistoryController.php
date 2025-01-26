@@ -116,6 +116,7 @@ class HistoryController extends Controller
                 }
                 if($validated['type']=== 'affectation'){
                     $equipement->status = "indisponible";
+                    $equipement->etat = "used";
                     $equipement->id_employer = $employer->id_employer;
 
 

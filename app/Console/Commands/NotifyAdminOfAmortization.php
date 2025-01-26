@@ -28,12 +28,13 @@ class NotifyAdminOfAmortization extends Command
         }
 
         // Get all admin users
-        $admins = User::where('Type', 'admin')->get();
-
+        $users = User::where('Type', 'admin')
+                ->orWhere('Type', 'worker')
+                ->get();
         foreach ($equipment as $item) {
-            foreach ($admins as $admin) {
-                // Notify admin
-                $admin->notify(new EquipmentAmortizationReminder($item));
+            foreach ($users as $user) {
+                // Notify user
+                $user->notify(new EquipmentAmortizationReminder($item));
             }
 
             $item->notified = true ;

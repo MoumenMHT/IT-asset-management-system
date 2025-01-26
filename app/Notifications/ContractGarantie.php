@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
+ 
 class ContractGarantie extends Notification
 {
     use Queueable;
@@ -26,8 +26,12 @@ class ContractGarantie extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            'message' => 'The equipment "' . $this->contract->ref . '" is nearing its amortization date.',
-            'garantie' => $this->contract->garantie,
+            'message' => 'The contract "' . $this->contract->ref . '" is nearing its garantie date.',
+            'date_amortissement' => $this->contract->garantie,
+            'array' => $this->contract,
+            'type' => 'contract',
+
+
         ];
     }
 }

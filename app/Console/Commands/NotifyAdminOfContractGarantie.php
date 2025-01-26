@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\Contract;
 use App\Models\User;
-use App\Notifications\EquipmentAmortizationReminder;
+use App\Notifications\ContractGarantie;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 class NotifyAdminOfContractGarantie extends Command
@@ -25,12 +25,13 @@ class NotifyAdminOfContractGarantie extends Command
         }
 
         // Get all admin users
-        $admins = User::where('type', 'admin')->get();
-
+        $users = User::where('Type', 'admin')
+                ->orWhere('Type', 'worker')
+                ->get();
         foreach ($equipment as $item) {
-            foreach ($admins as $admin) {
-                // Notify admin
-                $admin->notify(new EquipmentAmortizationReminder($item));
+            foreach ($users as $user) {
+                // Notify user
+                $user->notify(new ContractGarantie($item));
             }
 
             $item->notified = true ;
