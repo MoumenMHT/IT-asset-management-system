@@ -279,7 +279,7 @@
   <div class="card recent-sales overflow-auto">
 
 <div class="card-body">
-          <h5 class="card-title">Contracts Table</h5>
+          <h5 class="card-title">Equipments Table</h5>
 
           <vue-good-table
             :columns="columnsEquipmentEmployer"
@@ -318,7 +318,6 @@
       ], // Define table columns
 
           columns: [
-        { label: 'Num', field: 'id' },
         { label: 'Contract Reference', field: 'ref' },
         { label: 'Fournisseur', field: 'fournisseur' },
         { label: 'Str Contract', field: 'structure' },
