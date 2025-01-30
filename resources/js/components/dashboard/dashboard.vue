@@ -289,7 +289,23 @@
           />
 
   </div>
+
 </div>
+<div v-if="name === 'admin'" class="card recent-sales overflow-auto">
+  <div class="card-body">
+          <h5 class="card-title">Activities Table</h5>
+
+          <vue-good-table
+            :columns="columnsactivities"
+            :rows="activitys"
+            :pagination-options="{ enabled: true }"
+            :search-options="{ enabled: true }"
+          />
+
+  </div>
+</div>
+
+
 
 
 
@@ -297,12 +313,20 @@
 
     <script>
     import Chart from "chart.js/auto";
-    import { log10 } from "chart.js/helpers";
+    import CryptoJS from 'crypto-js';
 
     export default {
       data() {
         return {
+        activitys: [],
 
+        columnsactivities: [
+        { label: 'Description', field: 'description' },
+        { label: 'Subject', field: 'subject' },
+        { label: 'At', field: 'time' },
+        { label: 'By', field: 'user' },
+
+      ], 
           columnsEquipmentEmployer: [
         { label: 'Num Serie', field: 'num_serie' },
         { label: 'Type', field: 'Type' },
@@ -349,6 +373,7 @@
           contractsByType: [], // Array to store filtered equipment by contracts
           typeCountsStructure: [],
 
+          name:'',
 
         };
       },
@@ -358,8 +383,38 @@
         this.getContract();
         this.getEquipment();
         this.getStructure();
+        this.getActivity();
 
 
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        let encryptedData = urlParams.get('data');
+        
+
+        if (encryptedData) {
+            try {
+                // Decrypt the data
+                const secretKey = "abdou";
+                const bytes = CryptoJS.AES.decrypt(encryptedData, secretKey);
+                const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+
+                // Access the decrypted values
+                console.log('Decrypted User Data:', decryptedData);
+                const {  username } = decryptedData;
+                
+
+                this.name = username;
+                console.log(this.name);
+                
+
+
+               
+
+
+            } catch (error) {
+                console.error('Failed to decrypt data:', error);
+            }
+        }
 
        
       },  
@@ -385,6 +440,21 @@
         
       },
       methods:{
+        getActivity(){
+
+          axios
+            .get("/api/activity/getActivity")
+            .then((response) => {
+              this.activitys = response.data;
+              console.log('activity',response);
+              
+              
+              
+            })
+            .catch((error) => {
+              console.error("Error fetching data:", error);
+            });
+        },
         getStructure(){
 
           axios

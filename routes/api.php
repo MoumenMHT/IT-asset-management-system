@@ -10,6 +10,8 @@ use App\Http\Controllers\EmployerController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ActivityControler;
+
 
 
 // Public Routes
@@ -29,6 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     
 
+    Route::get('/activity/getActivity', [ActivityControler::class, 'getActivity']);
     Route::get('/contracts/getContracts', [ContractsController::class, 'getContracts']);
     Route::get('/structure/getStructure', [StructureController::class, 'getStructures']);
     Route::get('/equipment/getEquipment', [EquipmentController::class, 'getEquipments']);
