@@ -14,7 +14,7 @@
             <div class="col-12">
                   <label class="form-label">Select Fournisseur</label>                 
                     <select class="form-select" aria-label="Default select example" v-model="form.fournisseur" >
-                      <option value="" disabled>Select a fournisseur</option>
+                      <option value="" disabled>Select a Provider</option>
                       <option v-for="fournisseur in fournisseurs" :key="fournisseur.id" :value="fournisseur.nom">
                         {{ fournisseur.nom }}
                       </option>
@@ -38,11 +38,11 @@
                     </select>  
             </div>
             <div class="col-12">
-              <label for="inputEmail4" class="form-label">Date D'acquisition</label>
+              <label for="inputEmail4" class="form-label">Date of Acquisition</label>
               <input type="date" v-model="form.date_acquisition" class="form-control" />
             </div>
             <div class="col-12">
-              <label for="inputEmail4" class="form-label">Garantie</label>
+              <label for="inputEmail4" class="form-label">Guarantee</label>
               <input type="date" v-model="form.garantie" class="form-control" />
             </div>
             
@@ -66,11 +66,11 @@
               <tr>
                 <th>Num</th>
                 <th>Contract Reference</th>
-                <th>Fournisseur</th>
+                <th>Provider</th>
                 <th>Str Contract</th>
-                <th>Garantie</th>
+                <th>Guarantee</th>
                 <th>Type Contract</th>
-                <th>Date Acquisition</th>
+                <th>Acquisition Date</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -95,7 +95,7 @@
                   </td>
                   <td>
                     <select class="form-select" aria-label="Default select example" v-model="editableContract.fournisseur" >
-                      <option value="" disabled>Select a Fournisseur</option>
+                      <option value="" disabled>Select a Provider</option>
                       <option v-for="fournisseur in fournisseurs" :key="fournisseur.id" :value="fournisseur.nom" >
                         {{ fournisseur.nom }}
                       </option>
@@ -114,7 +114,7 @@
                       type="date"
                       v-model="editableContract.garantie"
                       class="form-control"
-                      placeholder="Garantie"
+                      placeholder="Guarantee"
                     />
                   </td>
                   <td>

@@ -9,7 +9,7 @@
           <h5 class="card-title">Add a new equipment </h5>
           <form class="row g-3" @submit.prevent="submitForm">
             <div class="col-12">
-              <label for="inputNanme4" class="form-label">Num Serie</label>
+              <label for="inputNanme4" class="form-label">serial number</label>
               <input type="text" v-model="form.num_serie" class="form-control" />
             </div>
             <div class="col-12">
@@ -30,15 +30,15 @@
                   </select>
             </div>
             <div class="col-12">
-              <label for="inputPassword4" class="form-label">Marque</label>
+              <label for="inputPassword4" class="form-label">Brand</label>
                   <select class="form-select" aria-label="Default select example" v-model="form.marque" >
-                    <option value="" disabled>Select a Marque</option>
+                    <option value="" disabled>Select a Brand</option>
                     <option  >jfkjoih</option>
                   </select>
             </div>
             
             <div class="col-12">
-              <label for="inputPassword4" class="form-label">Etat</label>
+              <label for="inputPassword4" class="form-label">Condition</label>
                   <select class="form-select" aria-label="Default select example" v-model="form.etat" >
                     <option value="" disabled>Select a Etat</option>
                     <option>New</option>
@@ -46,7 +46,7 @@
                   </select>
             </div>
             <div class="col-12">
-              <label for="inputNanme4" class="form-label">Date D'amortissement</label>
+              <label for="inputNanme4" class="form-label">amortization date</label>
               <input type="date" v-model="form.date_amortissement" class="form-control" />
             </div>
             <div class="text-center">
@@ -68,13 +68,13 @@
               <thead>
                 <tr>
                   <th>Num</th>
-                  <th>num serie</th>
+                  <th>serial number</th>
                   <th>Contract</th>
                   <th>Type</th>
-                  <th>marque</th>
-                  <th>etat</th>
-                  <th>status</th>
-                  <th>date_amortissement</th>
+                  <th>Brand</th>
+                  <th>Condition</th>
+                  <th>Status</th>
+                  <th>amortization date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -95,7 +95,6 @@
                     </td>
                     <td>
                       <select class="form-select" aria-label="Default select example" v-model="editableContract.contract" >
-                        <option value="" disabled>Select a Contract</option>
                         
                         <option v-for="contract in contracts" :key="contract.id" :value="contract.ref" >
                             {{ contract.ref }}
@@ -110,23 +109,19 @@
                     </td>
                     <td>
                       <select class="form-select" aria-label="Default select example" v-model="editableContract.marque" >
-                        <option value="" disabled>Select a Marque</option>
+                        <option value="" disabled>Select a Brand</option>
                         <option  >jfkjoih</option>
                       </select>
                     </td>
                     <td>
                       <select class="form-select" aria-label="Default select example" v-model="editableContract.etat" >
-                        <option value="" disabled>Select a Etat</option>
+                        <option value="" disabled>Select a Condition</option>
                         <option>New</option>
                         <option>Used</option>
                       </select>
                     </td>
                     <td>
-                      <input
-                        type="text"
-                        v-model="editableContract.status"
-                        class="form-control"
-                      />
+                      {{ editableContract.status }}
                     </td>
                     <td>
                       <input

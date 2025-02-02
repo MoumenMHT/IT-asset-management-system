@@ -37,16 +37,7 @@
                   </v-autocomplete>
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Nom</label>
-                  <input
-                    type="text"
-                    class="form-control"
-                    :value="selectedEmployee ? selectedEmployee.nom :''"
-                    readonly
-                  />
-                </div>
-                <div class="mb-3">
-                  <label class="form-label">Prenom</label>
+                  <label class="form-label">First Name</label>
                   <input
                     type="text"
                     class="form-control"
@@ -54,6 +45,16 @@
                     readonly
                   />
                 </div>
+                <div class="mb-3">
+                  <label class="form-label">Last Name</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    :value="selectedEmployee ? selectedEmployee.nom :''"
+                    readonly
+                  />
+                </div>
+                
           
                 <!-- Fonction -->
                 <div class="mb-3">
@@ -84,7 +85,7 @@
             
                 <!-- Filter by Type -->
                 <div class="mb-3">
-                  <label class="form-label">Filter by Type</label>
+                  <label class="form-label">Filter by Euipment Type</label>
                   <v-select
                     v-model="selectedType"
                     :items="equipments.map(item => item.Type).filter((value, index, self) => self.indexOf(value) === index)" 
@@ -104,7 +105,7 @@
               
                 <!-- Equipment Autocomplete -->
                 <div class="mb-3">
-                  <label class="form-label">Equipment Code Bar</label>
+                  <label class="form-label">Equipment serial number</label>
                   <v-autocomplete
                     v-model="selectedEquipment"
                     :items="filteredEquipments"
@@ -134,7 +135,7 @@
                   />
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Marque</label>
+                  <label class="form-label">Brand</label>
                   <input
                     type="text"
                     class="form-control"
@@ -143,7 +144,7 @@
                   />
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Etat</label>
+                  <label class="form-label">Condition</label>
                   <input
                     type="text"
                     class="form-control"
@@ -152,7 +153,7 @@
                   />
                 </div>
                 <div class="mb-3">
-                  <label class="form-label">Date D'amortissement</label>
+                  <label class="form-label">amortization date</label>
                   <input
                     type="text"
                     class="form-control"
@@ -189,8 +190,8 @@
       <th>Employer</th>
       <th>Equipement</th>
       <th>Status</th>
-      <th>Créé à</th>
-      <th>Mis à jour à</th>
+      <th>Created at</th>
+      <th>Updated at</th>
       <th>Action</th>
     </tr>
   </thead>
@@ -209,8 +210,8 @@
         <td>
           <select class="form-select" aria-label="Default select example" v-model="editablehistory.type">
             <option value="" disabled>{{history.type}}</option>
-            <option>affectation</option>
-            <option>desaffectation</option>
+            <option>assignment</option>
+            <option>restitution</option>
           </select>
         </td>
         <td>

@@ -8,15 +8,17 @@
           <form class="row g-3" @submit.prevent="submitForm">
 
             <div class="col-12">
-              <label for="inputNanme4" class="form-label">Nom Employer</label>
-              <input type="text" v-model="form.nom" class="form-control" />
-            </div>
-            <div class="col-12">
-              <label for="inputNanme4" class="form-label">Prenom Employer</label>
+              <label for="inputNanme4" class="form-label"> Employer First Name</label>
               <input type="text" v-model="form.prenom" class="form-control" />
             </div>
+
             <div class="col-12">
-              <label for="inputNanme4" class="form-label">Fonctionnement </label>
+              <label for="inputNanme4" class="form-label"> Employer Last Name</label>
+              <input type="text" v-model="form.nom" class="form-control" />
+            </div>
+            
+            <div class="col-12">
+              <label for="inputNanme4" class="form-label">Function </label>
               <input type="text" v-model="form.fonc" class="form-control" />
             </div>
             <div class="col-12">
@@ -52,9 +54,9 @@
             <thead>
               <tr>
                 <th>Num</th>
-                <th>Nom</th>
-                <th>Prenom</th>
-                <th>Fonctionnement</th>
+                <th>First Name</th>
+                <th> Name</th>
+                <th>Fonction</th>
                 <th>Code</th>
                 <th>Structure</th>
                 <th>Action</th>
@@ -74,17 +76,17 @@
                   <td>
                     <input
                       type="text"
-                      v-model="editableemployer.nom"
+                      v-model="editableemployer.prenom"
                       class="form-control"
-                      placeholder="employer Reference"
+                      placeholder="Employer First Name"
                     />
                   </td>
                   <td>
                     <input
                       type="text"
-                      v-model="editableemployer.prenom"
+                      v-model="editableemployer.nom"
                       class="form-control"
-                      placeholder="employer Reference"
+                      placeholder="Employer Name"
                     />
                   </td>
                   <td>
@@ -92,7 +94,7 @@
                       type="text"
                       v-model="editableemployer.fonc"
                       class="form-control"
-                      placeholder="employer Reference"
+                      placeholder="Wmployer Fonction"
                     />
                   </td>
                   <td>
@@ -100,7 +102,7 @@
                       type="text"
                       v-model="editableemployer.code"
                       class="form-control"
-                      placeholder="employer Reference"
+                      placeholder="employer Code"
                     />
                   </td>
                   
@@ -134,8 +136,8 @@
                 <!-- Normal Row -->
                 <template v-else>
                   <td>{{ index +1 }}</td>
-                  <td>{{ employer.nom }}</td>
                   <td>{{ employer.prenom }}</td>
+                  <td>{{ employer.nom }}</td>
                   <td>{{ employer.fonc }}</td>
                   <td>{{ employer.code }}</td>
                   <td>{{ employer.structure }}</td>

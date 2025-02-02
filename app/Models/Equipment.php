@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
+use Spatie\Activitylog\Contracts\Activity;
+
 
 
 class Equipment extends Model
@@ -32,5 +34,11 @@ class Equipment extends Model
         return $this->belongsTo(Employer::class, 'id_employer', 'id_employer');
     }
 
+
+
+    public function tapActivity(Activity $activity, string $eventName)
+    {
+        $activity->subject_type = class_basename($activity->subject_type); // Store only "User" instead of "App\Models\User"
+    }
 
 }

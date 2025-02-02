@@ -55,11 +55,11 @@
               <table class="table table-bordered table-striped">
                 <thead>
                   <tr>
-                    <th>num-serie</th>
-                    <th>marque</th>
-                    <th>etat</th>
-                    <th>status</th>
-                    <th>date amortissement</th>
+                    <th>Serial Number</th>
+                    <th>Brand</th>
+                    <th>Condition</th>
+                    <th>Status</th>
+                    <th>amortization date</th>
                     
                   </tr>
                 </thead>
@@ -82,8 +82,8 @@
                 <thead>
                   <tr>
                     <th>Contract reffrence </th>
-                    <th>date d'acquisition</th>
-                    <th>garantie</th>
+                    <th>Acquisition Date</th>
+                    <th>Guarantee</th>
                     
                     
                   </tr>

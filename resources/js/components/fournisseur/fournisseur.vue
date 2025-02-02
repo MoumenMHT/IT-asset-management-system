@@ -8,7 +8,7 @@
           <form class="row g-3" @submit.prevent="submitForm">
 
             <div class="col-12">
-              <label for="inputNanme4" class="form-label">Fournisseur</label>
+              <label for="inputNanme4" class="form-label">Provider</label>
               <input type="text" v-model="form.fournisseur" class="form-control" />
             </div>
             
@@ -25,13 +25,13 @@
       <!-- Table Section -->
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">All fournisseurs</h5>
+          <h5 class="card-title">All Providers</h5>
           <div id="Table">
            <table class="table datatable" ref="datatable">
             <thead>
               <tr>
                 <th>Num</th>
-                <th>Nom</th>
+                <th>Name</th>
                 <th>Action</th>
               </tr>
             </thead>

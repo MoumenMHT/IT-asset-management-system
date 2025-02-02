@@ -4,13 +4,13 @@
       <!-- Form Section -->
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">user Form</h5>
+          <h5 class="card-title">User Form</h5>
           <form class="row g-3" @submit.prevent="submitForm">
 
             
             
             <div class="col-12">
-                  <label class="form-label">Select employes</label>                 
+                  <label class="form-label">Select employee</label>                 
                     <select class="form-select" aria-label="Default select example" v-model="form.employer" >
                       <option value="" disabled>Select a employes</option>
                       <option v-for="employe in employes" :key="employe.id" :value="employe.nom">
@@ -28,9 +28,9 @@
               <input type="text" v-model="form.password" class="form-control" />
             </div>
             <div class="col-12">
-                  <label class="form-label">Select employes</label>                 
+                  <label class="form-label">Select User Type</label>                 
                     <select class="form-select" aria-label="Default select example" v-model="form.type" >
-                      <option value="" disabled>Select a Type</option>
+                      <option value="" disabled>Select a User Type</option>
                       <option  >admin</option>
                       <option  >worker</option>
                       <option  >viewer</option>
@@ -56,7 +56,7 @@
             <thead>
               <tr>
                 <th>Num</th>
-                <th>Code D'employer</th>
+                <th>Employer Code</th>
                 <th>Username</th>
                 <th>Password</th>
                 <th>Type</th>

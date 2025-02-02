@@ -31,7 +31,7 @@
             <thead>
               <tr>
                 <th>Num</th>
-                <th>Nom</th>
+                <th>Name</th>
                 <th>Action</th>
               </tr>
             </thead>

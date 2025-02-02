@@ -24,7 +24,7 @@
                   </li>
                 </ul>
               </div>
-              <h5 class="card-title">Equipement <span>| Dissponible</span></h5>
+              <h5 class="card-title">Equipment <span>| Available</span></h5>
               <div class="d-flex align-items-center">
                 <div
                   class="card-icon rounded-circle d-flex align-items-center justify-content-center"
@@ -72,7 +72,7 @@
                   </li>
                 </ul>
               </div>
-          <h5 class="card-title">Nombre des euipement affecter par structure </h5>
+          <h5 class="card-title">Number of Used Equipment by Structure </h5>
 
           <div class="chart-container">
             <canvas  id="EquipementEmployerChart"> </canvas>
@@ -101,7 +101,7 @@
     </ul>
 
     <a class="icon cursor-pointer" data-bs-toggle="dropdown">
-      Fournisseur
+      Provider
     </a>
     <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
       <li class="dropdown-header text-start">
@@ -120,7 +120,7 @@
               
 
                 <div class="card-body">
-                  <h5 class="card-title">Contracts Table</h5>
+                  <h5 class="card-title">Contracts And Structures Table</h5>
 
                   <vue-good-table
                     :columns="columns"
@@ -145,17 +145,17 @@
                   
                   <li class="cursor-pointer">
                     <a class="dropdown-item" @click="ContractEquipmentDisponible('Dissponible')">
-                      Dissponible
+                      Available
                     </a>
                   </li>
                   <li class="cursor-pointer">
                     <a class="dropdown-item" @click="ContractEquipmentDisponible('Indissponible')">
-                      Indissponible
+                      Unavailable
                     </a>
                   </li>
                 </ul>
               </div>
-          <h5 class="card-title">Nombre des equipement disponible/indissponible dans chaque contrat </h5>
+          <h5 class="card-title">Number of equipment available/unavailable in each contract </h5>
 
           <div class="chart-container">
             <canvas id="ContractEquipmentDisponibleChart"> </canvas>
@@ -191,7 +191,7 @@
                   </li>
                 </ul>
               </div>
-              <h5 class="card-title">Equipement <span>| Indissponible</span></h5>
+              <h5 class="card-title">Equipement <span>| Unavailable</span></h5>
               <div class="d-flex align-items-center">
                 <div
                   class="card-icon rounded-circle d-flex align-items-center justify-content-center"
@@ -227,7 +227,7 @@
                   </li>
                 </ul>
               </div>
-          <h5 class="card-title">Les types des equipements  dans  structure </h5>
+          <h5 class="card-title">Types of Equipment in Structure </h5>
 
           <div class="chart-container">
             <canvas  id="StructureEuipmentType"> </canvas>
@@ -241,7 +241,7 @@
                   <div class="card recent-sales overflow-auto">
 
         <div class="card-body">
-                  <h5 class="card-title">Contracts Table</h5>
+                  <h5 class="card-title">Contracts And Euipments Table</h5>
 
                   <vue-good-table
                     :columns="ContractEquipment"
@@ -257,7 +257,7 @@
         
 
             <div class="card-body pb-0">
-              <h5 class="card-title">Nombre de contrat par structure </h5>
+              <h5 class="card-title">Number of Contracts by Structure </h5>
 
               <div class="chart-container">
                 <canvas  id="EquipementPieChart"> </canvas>
@@ -328,32 +328,32 @@
 
       ], 
           columnsEquipmentEmployer: [
-        { label: 'Num Serie', field: 'num_serie' },
+        { label: 'serial number', field: 'num_serie' },
         { label: 'Type', field: 'Type' },
-        { label: 'Date Amortissement', field: 'date_amortissement' },
-        { label: 'Etat', field: 'etat' },
-        { label: 'Status', field: 'status' },
+        { label: 'amortization date', field: 'date_amortissement' },
+        { label: 'State', field: 'etat' },
+        { label: 'Condition', field: 'status' },
         { label: 'Employer Code', field: 'employer.code' },
-        { label: 'Employer Prenom', field: 'employer.prenom' },
-        { label: 'Employer Name', field: 'employer.nom' },
-        { label: 'Fonctionnement', field: 'employer.fonc' },
+        { label: 'Employer First Name', field: 'employer.prenom' },
+        { label: 'Employer Last Name', field: 'employer.nom' },
+        { label: 'Provider', field: 'employer.fonc' },
         { label: 'Structure', field: 'structure' },
 
       ], // Define table columns
 
           columns: [
         { label: 'Contract Reference', field: 'ref' },
-        { label: 'Fournisseur', field: 'fournisseur' },
+        { label: 'Provider', field: 'fournisseur' },
         { label: 'Str Contract', field: 'structure' },
-        { label: 'Garantie', field: 'garantie' },
-        { label: 'Type Contract', field: 'Type_contract' },
-        { label: 'Date Acquisition', field: 'date_acquisition' },
+        { label: 'Guarantee', field: 'garantie' },
+        { label: 'Contract Type', field: 'Type_contract' },
+        { label: 'Date of Acquisition', field: 'date_acquisition' },
       ], // Define table columns
       ContractEquipment: [
         { label: 'Contract Reference', field: 'contractRef' },
-        { label: 'fournisseur', field: 'fournisseur' },
-        { label: 'Equipement', field: 'num_serie' },
-        { label: 'Date Amortissement', field: 'date_amortissement' },
+        { label: 'Provider', field: 'fournisseur' },
+        { label: 'Equipment', field: 'num_serie' },
+        { label: 'amortization date', field: 'date_amortissement' },
 
 
       

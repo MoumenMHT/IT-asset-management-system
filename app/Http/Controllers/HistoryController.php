@@ -114,7 +114,7 @@ class HistoryController extends Controller
                 if ($equipement) {
                     $history->id_equipement = $equipement->id_equipement;
                 }
-                if($validated['type']=== 'affectation'){
+                if($validated['type']=== 'assignment'){
                     $equipement->status = "indisponible";
                     $equipement->etat = "used";
                     $equipement->id_employer = $employer->id_employer;
@@ -138,7 +138,8 @@ class HistoryController extends Controller
                     return response()->json(['message' => 'Equipment not found or not available'], 200);
                 }
     
-                $history->type = 'affectation';
+                $history->type = 'assignment';
+                $equipement->etat = "used";
                 $history->id_equipement = $equipement->id_equipement;
                 $equipement->id_employer = $employer->id_employer;
     
