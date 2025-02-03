@@ -60,11 +60,11 @@
                     <th>Condition</th>
                     <th>Status</th>
                     <th>amortization date</th>
-                    
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
+
                     <td>{{ selectedNotification.data.array.num_serie }}</td>
                     <td>{{ selectedNotification.data.array.marque }}</td>
                     <td>{{ selectedNotification.data.array.etat }}</td>
@@ -81,10 +81,10 @@
               <table class="table table-bordered table-striped">
                 <thead>
                   <tr>
+                    
                     <th>Contract reffrence </th>
                     <th>Acquisition Date</th>
                     <th>Guarantee</th>
-                    
                     
                   </tr>
                 </thead>
