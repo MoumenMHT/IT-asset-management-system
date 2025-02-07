@@ -224,20 +224,44 @@
                     md="14"
                     sm="6"
                   >
-                    <v-text-field
-                      v-model="editedItem.employer.code"
-                      label="Employer Code"
-                    ></v-text-field>
+                  <v-autocomplete
+                    v-model="editedItem.employer"
+                    :items="employes"
+                    item-title="code"
+                    label="Code"
+                    variant="outlined"
+                    return-object
+                  >
+                    <template v-slot:item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
+                        :title="item.raw.code"
+                      ></v-list-item>
+                    </template>
+                  </v-autocomplete>
                   </v-col>
                   <v-col
                     cols="12"
                     md="14"
                     sm="6"
                   >
-                    <v-text-field
-                      v-model="editedItem.equipement.num_serie"
-                      label="Siryal Number"
-                    ></v-text-field>
+                  <v-autocomplete
+                    v-model="editedItem.equipement"
+                    :items="filteredEquipments"
+                    item-title="num_serie"
+                    label="Num Serie"
+                    variant="outlined"
+                    return-object
+                  >
+                    <template v-slot:item="{ props, item }">
+                      <v-list-item
+                        v-bind="props"
+                        :subtitle="`Type: ${item.raw.Type} - Marque: ${item.raw.marque} - Etat: ${item.raw.etat} - Date D'amortissement: ${item.raw.date_amortissement}`"
+                        :title="item.raw.num_serie"
+                      ></v-list-item>
+                    </template>
+                  </v-autocomplete>
                   </v-col>
                   
                   
@@ -302,7 +326,7 @@
   <template v-else>
     <button 
       @click="triggerFileInput(index, item)" 
-      class="btn btn-secondary btn-sm"
+      class="btn btn-warning btn-sm"
     >
       Update file
     </button>
@@ -347,9 +371,16 @@
 
 <script>
 import axios from "axios";
+import { reactive } from 'vue'; // Import reactive for Vue 3
 
 
 export default {
+  setup() {
+    // Use reactive to make the object a proxy
+    const editedItem = reactive({
+      employer: null, // This will hold the selected employer object (as a proxy)
+    });
+  },
 
   data() {
     return {
@@ -357,19 +388,11 @@ export default {
       dialogDelete: false,
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-        code: '',
+       
+
       },
       headers:[
       { title: 'Type', key:'type' },
@@ -596,15 +619,14 @@ generatePdf(affectationId) {
       let id = this.historys[this.editedIndex].id;
       
         let updatedhistory =this.editedItem;
-        console.log( updatedhistory);
-         
-        
-        
-       
+        if (updatedhistory.employer.id) {
+            updatedhistory.employer.id_employer = updatedhistory.employer.id;
+        }        if (updatedhistory.equipement.id) {
+            updatedhistory.equipement.id_equipement = updatedhistory.equipement.id;
+        }
+
         console.log('Updated history Before Sending:', updatedhistory);
-        console.log(index);
-        console.log(id);
-        
+
         
 
         axios
@@ -622,7 +644,7 @@ generatePdf(affectationId) {
                 
                 const affectationId = response.data.id;
                 
-                this.generatePdf(affectationId);
+                //this.generatePdf(affectationId);
                
               
            
