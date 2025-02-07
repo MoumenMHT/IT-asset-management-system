@@ -186,7 +186,7 @@
   <v-data-table
     :headers="headers"
     :items="historys"
-    :sort-by="[{ key: 'created_at', order: 'des' }]"
+    :sort-by="[{ key: 'created_at', order: 'desc' }]"
   >
     <template v-slot:top>
       <v-toolbar
@@ -444,7 +444,7 @@ export default {
 
   computed: {
         formTitle () {
-          return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+          return this.editedIndex === -1 ? 'New History' : 'Edit History'
         },
       },
   methods: {
@@ -559,7 +559,7 @@ initializeDataTable() {
           employer: { id_employer: this.selectedEmployee.id },
           equipement: {id_equipement: this.selectedEquipment.id }
         };
-        console.log(data);
+        console.log('here', data);
 
 
         if (data.employer && data.equipement) {
@@ -569,9 +569,10 @@ initializeDataTable() {
                   if(response.data.message){
 
                     alert(response.data.message);
-                    console.log(response.data.id);
-                    const affectationId = response.data.id;
+                    console.log(response.data.history);
+                    const affectationId = response.data.history.id;
                     console.log('Calling generatePdf with ID:', affectationId);
+                    this.historys.unshift(response.data.history);
                     this.generatePdf(affectationId);
                   }else if(response.data.error) {
                     alert(response.data.error);
@@ -614,7 +615,31 @@ generatePdf(affectationId) {
     },
     save() {
       console.log('id is ', this.editedItem );
+      if(this.editedItem.type === 'restitution'){
+
+        const equipment = this.equipments.find(e => e.id === this.editedItem.equipement.id_equipement);
+
+        if (equipment) {
+          this.filteredEquipments.unshift(equipment);
+
+            console.log('Equipment:', equipment);
+        } else {
+            console.error('Error: Equipment not found', this.equipments, this.editedItem.equipement.id_equipement);
+        }
+      
+      }
+      if (this.editedItem.type === 'assignment') {
+          const index = this.filteredEquipments.findIndex(e => e.id === this.editedItem.equipement.id_equipement);
+
+          if (index !== -1) {
+              this.filteredEquipments.splice(index, 1);  // Remove the equipment at the found index
+              console.log('Equipment removed:', this.editedItem.equipement.id_equipement);
+          } else {
+              console.error('Error: Equipment not found', this.filteredEquipments, this.editedItem.equipement.id_equipement);
+          }
+      }
       this.historys.unshift(this.editedItem);
+
       let index = this.editedIndex;
       let id = this.historys[this.editedIndex].id;
       

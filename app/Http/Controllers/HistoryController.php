@@ -154,10 +154,25 @@ class HistoryController extends Controller
     
             // Save history object
             $history->save();
-    
+
+
+           
             // Return success response with history ID
-            return response()->json(['message' => 'Employer inserted successfully!', 'id' => $history->id_history], 200);
-    
+            return response()->json([
+                'message' => 'Employer inserted successfully!',
+                'history' => [
+                    'id'         => $history->id_history,
+                    'type'       => $history->type,
+                    'status'     => $history->status,
+                    'id_employer'=> $history->id_employer,
+                    'id_equipement' => $history->id_equipement,
+                    'created_at' => Carbon::parse($history->created_at)->format('Y-m-d H:i:s'),
+                    'updated_at' => Carbon::parse($history->updated_at)->format('Y-m-d H:i:s'),
+                    'employer'  => $history->employer,
+                    'equipement' => $history->equipement,
+                ],
+                
+            ], 200);    
         } catch (\Exception $e) {
             // Log the error for debugging
             \Log::error($e->getMessage());
