@@ -210,12 +210,6 @@ class HistoryController extends Controller
 
             $history = Hostory::find($id);
 
-            if (!$history || $history->status === "confirmer") {
-                return response()->json([
-                    'message' => 'history not found or alredy confirmed.',
-                ], 300);
-            }
-            
             
 
             $history->status = "confirmer";

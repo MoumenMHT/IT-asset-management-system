@@ -182,126 +182,158 @@
         <div class="card-body">
           <h5 class="card-title">All historys</h5>
           <div id="Table">
-            <table class="table datatable" ref="datatable">
-  <thead>
-    <tr>
-      <th>Num</th>
-      <th>Type</th>
-      <th>Employer</th>
-      <th>Equipement</th>
-      <th>Status</th>
-      <th>Created at</th>
-      <th>Updated at</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- Display message when no historys are available -->
-    <tr v-if="historys.length === 0">
-      <td colspan="7" class="text-center">No historys available.</td>
-    </tr>
-
-    <!-- Loop through historys -->
-    <tr v-for="(history, index) in historys" :key="history.id" :class="{'bg-light': history.status === 'en attente'}">
-      <!-- Editable Row -->
-      <template v-if="editRow === history.id">
-        <td>{{ index + 1 }}</td>
+           
+  <v-data-table
+    :headers="headers"
+    :items="historys"
+    :sort-by="[{ key: 'created_at', order: 'des' }]"
+  >
+    <template v-slot:top>
+      <v-toolbar
+        flat
+      >
+        <v-toolbar-title>Equipments History</v-toolbar-title>
         
-        <td>
-          <select class="form-select" aria-label="Default select example" v-model="editablehistory.type">
-            <option value="" disabled>{{history.type}}</option>
-            <option>assignment</option>
-            <option>restitution</option>
-          </select>
-        </td>
-        <td>
-          <v-autocomplete
-            v-model="editablehistory.employer"
-            :items="employes"
-            item-title="code"
-            label="Code"
-            variant="outlined"
-            return-object
-          >
-            <template v-slot:item="{ props, item }">
-              <v-list-item
-                v-bind="props"
-                :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
-                :title="item.raw.code"
-              ></v-list-item>
-            </template>
-          </v-autocomplete>
-        </td>
-        
-        <td>
-          <v-autocomplete
-            v-model="editablehistory.equipement"
-            :items="filteredEquipments"
-            item-title="num_serie"
-            label="Num Serie"
-            variant="outlined"
-            return-object
-          >
-            <template v-slot:item="{ props, item }">
-              <v-list-item
-                v-bind="props"
-                :subtitle="`Type: ${item.raw.Type} - Marque: ${item.raw.marque} - Etat: ${item.raw.etat} - Date D'amortissement: ${item.raw.date_amortissement}`"
-                :title="item.raw.num_serie"
-              ></v-list-item>
-            </template>
-          </v-autocomplete>
-        </td>
-        <td>{{ history.status }}</td>
-        <td>{{ history.created_at }}</td>
-        <td>{{ history.updated_at }}</td>
-        
-        <td>
-          <button @click="confirmEdit(history.id, index)" class="btn btn-success btn-sm">
-            Confirm
-          </button>
-          &nbsp;
-          <button @click="cancelEdit()" class="btn btn-secondary btn-sm">
-            Cancel
-          </button>
-        </td>
-      </template>
+        <v-spacer></v-spacer>
+        <v-dialog
+          v-model="dialog"
+          max-width="500px"
+        >
+          
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">{{ formTitle }}</span>
+            </v-card-title>
 
-      <!-- Normal Row -->
-      <template v-else>
-        <td>{{ index + 1 }}</td>
-        <td>{{ history.type }}</td>
-        <td>{{ history.employer.code }}</td>
-        <td>{{ history.equipement.num_serie }}</td>
-        <td>{{ history.status }}</td>
-        <td>{{ history.created_at }}</td>
-        <td>{{ history.updated_at }}</td>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    cols="22"
+                    md="14"
+                    sm="6"
+                  >
+                  <v-select
+                    label="Select"
+                    v-model="editedItem.type"
+                    :items="['assignment', 'restitution']"
+                  ></v-select>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="14"
+                    sm="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.employer.code"
+                      label="Employer Code"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="14"
+                    sm="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.equipement.num_serie"
+                      label="Siryal Number"
+                    ></v-text-field>
+                  </v-col>
+                  
+                  
+                </v-row>
+              </v-container>
+            </v-card-text>
 
-        <td>
-          <button @click="enableEdit(history)" class="btn btn-primary btn-sm">
-            Edit
-          </button>
-          &nbsp;
-          <!-- Show upload button only if status is 'en attente' -->
-          <button v-if="history.status === 'en attente'" @click="triggerFileInput(index, history)" class="btn btn-secondary btn-sm">
-            Upload
-          </button>
-          <button
-            v-else
-            class="btn btn-secondary btn-sm"
-            @click="downloadFile(`/storage/${history.path}`)">
-            Download
-          </button>
-          <input
-            type="file"
-            :ref="'fileInput-' + index"
-            style="display: none"
-            @change="handleFileUpload"
-          />
-        </td>
-      </template>
-    </tr>
-  </tbody>
-</table>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue-darken-1"
+                variant="text"
+                @click="close"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="blue-darken-1"
+                variant="text"
+                @click="save"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <template v-slot:item.actions="{ item, index }">
+  <!-- Edit Icon -->
+  <v-icon
+    class="me-2"
+    size="small"
+    @click="editItem(item)"
+  >
+    mdi-pencil
+  </v-icon>
+  &nbsp;
+
+  <!-- File Upload/Update and Download Icons -->
+  <template v-if="item.status === 'en attente'">
+    <v-icon
+      class="me-2"
+      size="small"
+      @click="triggerFileInput(index, item)"
+    >
+      mdi-upload
+    </v-icon>
+    &nbsp;
+  </template>
+  <template v-else>
+    <button 
+      @click="triggerFileInput(index, item)" 
+      class="btn btn-secondary btn-sm"
+    >
+      Update file
+    </button>
+    &nbsp;
+    <v-icon
+      v-if="item.path"
+      class="me-2"
+      size="small"
+      @click="downloadFile(`/storage/${item.path}`)"
+    >
+      mdi-download
+    </v-icon>
+  </template>
+
+  <!-- Hidden File Input -->
+  <input
+    type="file"
+    :ref="'fileInput-' + index"
+    style="display: none"
+    @change="(event) => handleFileUpload(event, item)"
+  />
+</template>
+    <template v-slot:no-data>
+      <v-btn
+        color="primary"
+        @click="initialize"
+      >
+        Reset
+      </v-btn>
+    </template>
+  </v-data-table>
 
 
 
@@ -321,6 +353,35 @@ export default {
 
   data() {
     return {
+      dialog: false,
+      dialogDelete: false,
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0,
+      },
+      defaultItem: {
+        name: '',
+        calories: 0,
+        fat: 0,
+        carbs: 0,
+        protein: 0,
+        code: '',
+      },
+      headers:[
+      { title: 'Type', key:'type' },
+      { title: 'Employer Code', key:'employer.code' },  // Nested value for employer code
+      { title: 'Siryal Number', key:'equipement.num_serie' },  // Nested value for equipment serial number
+      { title: 'Status', key:'status' },
+      { title: 'Created at', key:'created_at' },
+      { title: 'Updated at', key:'updated_at' },
+      { title: 'Actions', key: 'actions', sortable: false },
+
+      ],
+
       selectedFile: null, // Store the uploaded file
       historyId: null, // Store the ID of the history for the file upload
       selectedEmployee: null,
@@ -338,8 +399,13 @@ export default {
             employer: '',
             equipement: '',
       }, // To temporarily store the editable history data
+      
+      
     };
+    
+    
   },
+
   
 
   mounted() {
@@ -352,8 +418,29 @@ export default {
         const queryParams = new URLSearchParams(window.location.search);
         this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
   },
+
+  computed: {
+        formTitle () {
+          return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        },
+      },
   methods: {
 
+
+    editItem (item) {
+      console.log('sdasdfaf');
+      
+        this.editedIndex = this.historys.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialog = true
+      },
+      close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
 
     selectNoFilter() {
       // Manually set the selectedType to null for "No Filter"
@@ -376,39 +463,73 @@ export default {
     
 
 
-    fetchHistorys() {
-      axios
-        .get("/api/history/getHistory")
-        .then((response) => {
-          this.historys = response.data;
-          
-          console.log(response.data);
-          if(this.historys){
-            this.$nextTick(() => {
-              
-              this.initializeDataTable();
-            });
-          }
-          
-          
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
-    },
-    initializeDataTable() {
+  fetchHistorys() {
+  axios
+    .get("/api/history/getHistory")
+    .then((response) => {
+      this.historys = response.data;
+
+      console.log('history', this.historys);
       
-      const tableRef = $(this.$refs.datatable);
-      if ($.fn.DataTable.isDataTable(this.$refs.datatable)) {
-        
-        tableRef.DataTable().clear().destroy();
+      // Check if the data is non-empty
+      if (this.historys && this.historys.length > 0) {
+        const tableRef = $(this.$refs.datatable);
+
+        // Only initialize or re-initialize if the table is not already initialized
+        if ($.fn.DataTable.isDataTable(this.$refs.datatable)) {
+          tableRef.DataTable().clear().destroy();
+        }
+
+        this.$nextTick(() => {
+          this.initializeDataTable(); // Initialize after the DOM is updated
+        });
+      } else {
+        console.log('No data available, DataTable not initialized');
       }
-      tableRef.DataTable({
-        paging: true,
-        searching: true,
-        responsive: true,
-      });
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+},
+
+initializeDataTable() {
+  const tableRef = $(this.$refs.datatable);
+
+  // Check if DataTable is already initialized
+  if ($.fn.DataTable.isDataTable(this.$refs.datatable)) {
+    // If DataTable is already initialized, clear it and destroy it
+    tableRef.DataTable().clear().destroy();
+  }
+
+  // Initialize DataTable with new data
+  tableRef.DataTable({
+    paging: true,
+    searching: true,
+    responsive: true,
+    data: this.historys, // Pass the correct structure to DataTable
+    columns: [
+      { data: (row, type, set, meta) => meta.row + 1 }, // Display index as number
+      { data: 'type' },
+      { data: 'employer.code' },  // Nested value for employer code
+      { data: 'equipement.num_serie' },  // Nested value for equipment serial number
+      { data: 'status' },
+      { data: 'created_at' },
+      { data: 'updated_at' },
+    ],
+    "processing": true,
+    "stateSave": true, // Save state to prevent re-initialization issues
+    "error": function (e, settings, techNote, message) {
+      // Custom handling: stop the alert from being shown
+      console.error("DataTable Error:", message); // Log to console, but don't show alert
     },
+    "initComplete": function(settings, json) {
+      // Prevent the error popup from showing
+      $('.dataTables_wrapper .dataTables_info').hide();
+    }
+ 
+  });
+},
+
       submitForm() {
        
         const data = { 
@@ -450,6 +571,14 @@ generatePdf(affectationId) {
     // Trigger the PDF download
     window.location.href = `/generate-pdf/${affectationId}`;
 },
+      closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+      
 
     enableEdit(history) {
       if (history && history.id) {
@@ -460,19 +589,17 @@ generatePdf(affectationId) {
     console.log('No valid history data found!');
   }
     },
-    confirmEdit(id, index) {
-      console.log('id is ' + id );
+    save() {
+      console.log('id is ', this.editedItem );
+      this.historys.unshift(this.editedItem);
+      let index = this.editedIndex;
+      let id = this.historys[this.editedIndex].id;
       
-        let updatedhistory = this.editablehistory;
+        let updatedhistory =this.editedItem;
         console.log( updatedhistory);
-        console.log( this.historys[index]);
          
         
         
-        if (JSON.stringify(updatedhistory) === JSON.stringify(this.historys[index])){
-          alert('u have change nothing');
-          return ;
-        }
        
         console.log('Updated history Before Sending:', updatedhistory);
         console.log(index);
@@ -486,8 +613,7 @@ generatePdf(affectationId) {
               
                 alert(response.data.message);
                 console.log(response.data);
-            
-                this.historys[index] = { ...updatedhistory }; // Update history in the historys array
+
                 this.historys[index].password = response.data.history;
                 
                 this.editRow = null; // Exit editing mode
@@ -496,7 +622,7 @@ generatePdf(affectationId) {
                 
                 const affectationId = response.data.id;
                 
-                //this.generatePdf(affectationId);
+                this.generatePdf(affectationId);
                
               
            
@@ -505,6 +631,7 @@ generatePdf(affectationId) {
             alert("Error updating history");
             console.log(error);
         });
+        this.close()
     },
     cancelEdit() {
       this.editRow = null;
@@ -604,6 +731,7 @@ triggerFileInput(index, id) {
 
       console.log("File uploaded successfully:", response.data);
       alert("File uploaded successfully!");
+      this.fetchHistorys();
     } catch (error) {
       if (error.response && error.response.data) {
         console.error("Error uploading file:", error.response.data);
@@ -644,3 +772,15 @@ downloadFile(filePath) {
   
 };
 </script>
+<style scoped>
+/* Hide DataTables warning */
+div.dataTables_wrapper .dataTables_info,
+div.dataTables_wrapper .dataTables_length,
+div.dataTables_wrapper .dataTables_filter,
+div.dataTables_wrapper .dataTables_paginate,
+div.dataTables_wrapper .dataTables_empty,
+div.dataTables_wrapper .dataTables_error {
+  display: none !important;
+}
+
+</style>
