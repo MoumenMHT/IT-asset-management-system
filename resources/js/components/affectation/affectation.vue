@@ -606,7 +606,7 @@ generatePdf(affectationId) {
 
     enableEdit(history) {
       if (history && history.id) {
-      this.editRow = history.id;
+      this.editRow = history.id;     
 
       this.editablehistory = { ...history }; // Store a copy of the history data
   } else {
@@ -614,6 +614,20 @@ generatePdf(affectationId) {
   }
     },
     save() {
+
+      let updatedhistory =this.editedItem;
+        if (updatedhistory.employer.id) {
+            updatedhistory.employer.id_employer = updatedhistory.employer.id;
+        } 
+        if (updatedhistory.equipement.id) {
+            updatedhistory.equipement.id_equipement = updatedhistory.equipement.id;
+        }
+
+      if ( !this.editedItem || !this.editedItem.type || !this.editedItem.equipement || !this.editedItem.equipement.id_equipement || !this.editedItem.employer || !this.editedItem.employer.id_employer) {
+        console.error('Error: Missing required fields in editedItem', this.editedItem);
+        alert('Please fill in all required fields before saving.');
+        return;
+      }
       console.log('id is ', this.editedItem );
       if(this.editedItem.type === 'restitution'){
 
@@ -643,12 +657,7 @@ generatePdf(affectationId) {
       let index = this.editedIndex;
       let id = this.historys[this.editedIndex].id;
       
-        let updatedhistory =this.editedItem;
-        if (updatedhistory.employer.id) {
-            updatedhistory.employer.id_employer = updatedhistory.employer.id;
-        }        if (updatedhistory.equipement.id) {
-            updatedhistory.equipement.id_equipement = updatedhistory.equipement.id;
-        }
+        
 
         console.log('Updated history Before Sending:', updatedhistory);
 
@@ -659,17 +668,16 @@ generatePdf(affectationId) {
             .then((response) => {
               
                 alert(response.data.message);
-                console.log(response.data);
+                console.log('dfsfsdf',response.data);
 
                 this.historys[index].password = response.data.history;
                 
                 this.editRow = null; // Exit editing mode
                 this.getEquipment; 
-                console.log(response);
                 
-                const affectationId = response.data.id;
+                const affectationId = response.data.history.id;
                 
-                //this.generatePdf(affectationId);
+                this.generatePdf(affectationId);
                
               
            
@@ -684,22 +692,7 @@ generatePdf(affectationId) {
       this.editRow = null;
       this.editablehistory = {}; // Clear the temporary storage
     },
-    deletehistory(id, index) {
-      if (confirm("Are you sure you want to delete this history?")) {
-        axios
-          .delete(`/api/historyCrud/${id}`)
-          .then((response) => {
-            console.log(response);
-            
-            alert(response.data.message);
-            this.historys.splice(index, 1);
-            
-          })
-          .catch((error) => {
-            alert("Error deleting history");
-          });
-      }
-    },
+   
     getEmployer(){
         
       axios
