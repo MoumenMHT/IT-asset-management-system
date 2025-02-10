@@ -616,12 +616,15 @@ generatePdf(affectationId) {
     save() {
 
       let updatedhistory =this.editedItem;
-        if (updatedhistory.employer.id) {
-            updatedhistory.employer.id_employer = updatedhistory.employer.id;
+
+        if (updatedhistory.employer && updatedhistory.employer.id) {
+          updatedhistory.employer.id_employer = updatedhistory.employer.id;
         } 
-        if (updatedhistory.equipement.id) {
+
+        if (updatedhistory.equipement && updatedhistory.equipement.id) {
             updatedhistory.equipement.id_equipement = updatedhistory.equipement.id;
         }
+
 
       if ( !this.editedItem || !this.editedItem.type || !this.editedItem.equipement || !this.editedItem.equipement.id_equipement || !this.editedItem.employer || !this.editedItem.employer.id_employer) {
         console.error('Error: Missing required fields in editedItem', this.editedItem);
