@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\structure;
+use Carbon\Carbon;
+
 
 class StructureController extends Controller
 {
@@ -34,6 +36,7 @@ class StructureController extends Controller
                 return [
                     'id' => $structures->id_structure, // Rename field
                     'nom' => $structures->nom,        // Include other fields as needed
+                    'created_at' => Carbon::parse($structures->created_at)->format('Y-m-d H:i:s'), 
                     // Add other fields you want to return
                 ];
             });
@@ -74,7 +77,13 @@ class StructureController extends Controller
             $structure = new Structure;
             $structure->nom = $validated['structure'];
             $structure->save();
-            return response()->json(['message' => 'structure Inserted successfully!','data' => $structure,], 200); 
+            return response()->json(['message' => 'structure Inserted successfully!',
+            'data' => [
+                    'id'         => $structure->id_structure,
+                    'nom'       => $structure->nom,
+                    'created_at' => Carbon::parse($structure->created_at)->format('Y-m-d H:i:s'),
+
+                ],], 200); 
 
         }catch (\Exception $e) {
             // Log the error for debugging

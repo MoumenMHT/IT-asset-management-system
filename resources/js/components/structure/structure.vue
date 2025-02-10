@@ -27,73 +27,98 @@
         <div class="card-body">
           <h5 class="card-title">All structures</h5>
           <div id="Table">
-           <table class="table datatable" ref="datatable">
-            <thead>
-              <tr>
-                <th>Num</th>
-                <th>Name</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Display message when no structures are available -->
-              <tr v-if="structures.length === 0">
-                <td colspan="7" class="text-center">No structures available.</td>
-              </tr>
+            <v-data-table
+              :headers="headers"
+              :items="structures"
+              :sort-by="[{ key: 'created_at', order: 'desc' }]"
+            >
+    <template v-slot:top>
+      <v-toolbar
+        flat
+      >
+        <v-toolbar-title>Structures Table</v-toolbar-title>
+       
+        <v-dialog
+          v-model="dialog"
+          max-width="500px"
+        >
+          
+          <v-card>
+            <v-card-title>
+              <span class="text-h5">{{ formTitle }}</span>
+            </v-card-title>
 
-              <!-- Loop through structures -->
-              <tr v-for="(structure, index) in structures" :key="structure.id">
-                <!-- Editable Row -->
-                <template v-if="editRow === structure.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editablestructure.nom"
-                      class="form-control"
-                      placeholder="structure Reference"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      @click="confirmEdit(structure.id, index)"
-                      class="btn btn-success btn-sm"
-                    >
-                      Confirm
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="cancelEdit()"
-                      class="btn btn-secondary btn-sm"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </template>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col
+                    
+                  >
+                    <v-text-field
+                      v-model="editedItem.nom"
+                      label="Structure Name"
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </v-card-text>
 
-                <!-- Normal Row -->
-                <template v-else>
-                  <td>{{ index +1 }}</td>
-                  <td>{{ structure.nom }}</td>
-                  <td>
-                    <button
-                      @click="enableEdit(structure)"
-                      class="btn btn-primary btn-sm"
-                    >
-                      Edit
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="deletestructure(structure.id, index)"
-                      class="btn btn-danger btn-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                color="blue-darken-1"
+                variant="text"
+                @click="close"
+              >
+                Cancel
+              </v-btn>
+              <v-btn
+                color="blue-darken-1"
+                variant="text"
+                @click="save"
+              >
+                Save
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+              <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-toolbar>
+    </template>
+    <template v-slot:item.actions="{ item }">
+      <v-icon
+        class="me-2"
+        size="small"
+        @click="editItem(item)"
+      >
+        mdi-pencil
+      </v-icon>
+      <v-icon
+        size="small"
+        @click="deleteItem(item)"
+      >
+        mdi-delete
+      </v-icon>
+    </template>
+    <template v-slot:no-data>
+      <v-btn
+        color="primary"
+        @click="initialize"
+      >
+        Reset
+      </v-btn>
+    </template>
+  </v-data-table>
 
 
           </div>
@@ -109,6 +134,17 @@ import axios from "axios";
 export default {
   data() {
     return {
+      dialog: false,
+      dialogDelete: false,
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+
+      },
+      defaultItem: {
+        name: '',
+
+      },
       form: {
         structure: "",
 
@@ -120,8 +156,23 @@ export default {
       editablestructure: {
         nom: "",
       }, // To temporarily store the editable structure data
+
+      headers:[
+      { title: 'Name', key:'nom' },
+      { title: 'Created At', key:'created_at' },  
+      { title: 'Actions', key: 'actions', sortable: false },
+
+      ],
     };
   },
+      computed: {
+        formTitle () {
+          return this.editedIndex === -1 ? 'New History' : 'Edit History'
+        },
+      },
+     
+
+  
   mounted() {
     this.fetchstructures();
     this.getStructure();
@@ -130,6 +181,38 @@ export default {
         this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
   },
   methods: {
+
+    closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+    deleteItem (item) {
+        this.editedIndex = this.structures.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
+
+    editItem (item) {
+      console.log('sdasdfaf');
+      
+        this.editedIndex = this.structures.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        console.log('sfaffd', this.editedIndex);
+        
+        this.dialog = true
+      },
+      close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
     fetchstructures() {
       axios
         .get("/api/structure/getStructure")
@@ -168,30 +251,12 @@ export default {
       axios
         .post("/api/structure", this.form)
         .then(response => {
-          console.log(response.data);
+          console.log(response.data.data);
             alert('structure inserted successfully');
 
-            const insertedData = response.data;
 
-            const tableRef = $(this.$refs.datatable).DataTable();
-            tableRef.row.add([
-                tableRef.rows().count() + 1, // Auto-increment the "Num" column
-                this.form.structure,     
-                `
-                    <button
-                        @click="enableEdit(structure)"
-                        class="btn btn-primary btn-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        @click="deletestructure(structure.id, index)"
-                        class="btn btn-danger btn-sm"
-                      >
-                        Delete
-                      </button>
-                ` // Actions column
-            ]).draw();
+            this.structures.unshift(response.data.data);
+
 
             this.ref = '';
             this.structure = '';
@@ -201,20 +266,22 @@ export default {
           alert("Error submitting form");
         });
     },
-    enableEdit(structure) {
-      if (structure && structure.id) {
-      this.editRow = structure.id;
-
-      this.editablestructure = { ...structure }; // Store a copy of the structure data
-  } else {
-    console.log('No valid structure data found!');
-  }
-    },
-    confirmEdit(id, index) {
-        const updatedstructure = this.editablestructure;
+    
+    close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+    save() {
+        const updatedstructure = this.editedItem;
         console.log('Updated structure Before Sending:', updatedstructure);
-        console.log(index);
-        console.log(id);
+        
+        let id = updatedstructure.id;
+        const editedIndex = this.editedIndex;  
+
+        
         
         
 
@@ -222,34 +289,36 @@ export default {
             .put(`/api/structure/${id}`, updatedstructure)
             .then((response) => {
               console.log(response);
-              
-            alert("structure updated successfully");
-            this.structures[index] = { ...updatedstructure }; // Update structure in the structures array
-            this.editRow = null; // Exit editing mode
+              console.log("Edited Index:",editedIndex);
+
+              alert("structure updated successfully");
+            
+              Object.assign(this.structures[editedIndex], updatedstructure);
             })
             .catch((error) => {
             alert("Error updating structure");
             console.log(error);
         });
+        this.close();
     },
     cancelEdit() {
       this.editRow = null;
       this.editablestructure = {}; // Clear the temporary storage
     },
-    deletestructure(id, index) {
-      if (confirm("Are you sure you want to delete this structure?")) {
+    deleteItemConfirm () {
+      const id = this.editedItem.id
         axios
           .delete(`/api/structure/${id}`)
           .then(() => {
             alert("structure deleted successfully");
-            this.structures.splice(index, 1);
+            this.structures.splice(this.editedIndex, 1);
             
           })
           .catch((error) => {
             alert("Error deleting structure");
           });
-      }
-    },
+          this.closeDelete();
+        },
     getStructure(){
 
       axios
