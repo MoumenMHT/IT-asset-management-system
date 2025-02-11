@@ -34,7 +34,8 @@
                   <label class="form-label">Select Type</label>                 
                     <select class="form-select" aria-label="Default select example" v-model="form.Type_contract" >
                       <option value="" disabled>Select a Type</option>
-                      <option  >jfkjoih</option>
+                      <option  >achat</option>
+                      <option  >maintenance</option>
                     </select>  
             </div>
             <div class="col-12">
@@ -61,121 +62,158 @@
         <div class="card-body">
           <h5 class="card-title">All Contracts</h5>
           <div id="Table">
-           <table class="table datatable" ref="datatable">
-            <thead>
-              <tr>
-                <th>Num</th>
-                <th>Contract Reference</th>
-                <th>Provider</th>
-                <th>Str Contract</th>
-                <th>Guarantee</th>
-                <th>Type Contract</th>
-                <th>Acquisition Date</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Display message when no contracts are available -->
-              <tr v-if="contracts.length === 0">
-                <td colspan="7" class="text-center">No contracts available.</td>
-              </tr>
+            <v-data-table
+            :headers="headers"
+            :items="contracts "
+            :sort-by="[{ key: 'created_at', order: 'desc' }]"
+          >
+  <template v-slot:top>
+    <v-toolbar
+      flat
+    >
+      <v-toolbar-title>Contracts Table</v-toolbar-title>
+     
+      <v-dialog
+        v-model="dialog"
+        max-width="500px"
+      >
+        
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">{{ formTitle }}</span>
+          </v-card-title>
 
-              <!-- Loop through contracts -->
-              <tr v-for="(contract, index) in contracts" :key="contract.id">
-                <!-- Editable Row -->
-                <template v-if="editRow === contract.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableContract.ref"
-                      class="form-control"
-                      placeholder="Contract Reference"
-                    />
-                  </td>
-                  <td>
-                    <select class="form-select" aria-label="Default select example" v-model="editableContract.fournisseur" >
-                      <option value="" disabled>Select a Provider</option>
-                      <option v-for="fournisseur in fournisseurs" :key="fournisseur.id" :value="fournisseur.nom" >
-                        {{ fournisseur.nom }}
-                      </option>
-                    </select>
-                  </td>
-                  <td>
-                    <select class="form-select" aria-label="Default select example" v-model="editableContract.structure" >
-                      <option value="" disabled>Select a Structure</option>
-                      <option v-for="structure in structures" :key="structure.id" :value="structure.nom" >
-                        {{ structure.nom }}
-                      </option>
-                    </select>
-                  </td>
-                  <td>
-                    <input
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col
+                    cols="12"
+                    md="4"
+                    sm="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.ref"
+                      label="Reference"
+                      
+                    ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="6"
+                  >
+                  <v-select
+                    label="Select"
+                    v-model="editedItem.fournisseur"
+                    :items="fournisseurs"
+                    item-title="nom"
+                  ></v-select>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="6"
+                  >
+                  <v-select
+                    label="Select"
+                    v-model="editedItem.structure"
+                    :items="structures"
+                    item-title="nom"
+                  ></v-select>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="6"
+                  >
+                  <v-select
+                    label="Select"
+                    v-model="editedItem.Type_contract"
+                    :items="['achat', 'maintenance']"
+                  ></v-select>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="6"
+                  >
+                  <v-text-field
+                    v-model="editedItem.garantie"
+                    label="Guarantee"
+                    type="date"
+                  ></v-text-field>
+                  </v-col>
+                  <v-col
+                    cols="12"
+                    md="4"
+                    sm="6"
+                  >
+                    <v-text-field
+                      v-model="editedItem.date_acquisition"
+                      label="Acquisition Date"
                       type="date"
-                      v-model="editableContract.garantie"
-                      class="form-control"
-                      placeholder="Guarantee"
-                    />
-                  </td>
-                  <td>
-                    <select class="form-select" aria-label="Default select example" v-model="editableContract.Type_contract" >
-                      <option value="" disabled>Select a Type</option>
-                      <option  >jfkjoih</option>
-                      <option  >kkkk</option>
-                    </select>
-                  </td>
-                  <td>
-                    <input
-                      type="date"
-                      v-model="editableContract.date_acquisition"
-                      class="form-control"
-                    />
-                  </td>
-                  <td>
-                    <button
-                      @click="confirmEdit(contract.id, index)"
-                      class="btn btn-success btn-sm"
-                    >
-                      Confirm
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="cancelEdit()"
-                      class="btn btn-secondary btn-sm"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </template>
+                    ></v-text-field>
+                  </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
 
-                <!-- Normal Row -->
-                <template v-else>
-                  <td>{{ index +1 }}</td>
-                  <td>{{ contract.ref }}</td>
-                  <td>{{ contract.fournisseur }}</td>
-                  <td>{{ contract.structure }}</td>
-                  <td>{{ contract.garantie }}</td>
-                  <td>{{ contract.Type_contract }}</td>
-                  <td>{{ contract.date_acquisition }}</td>
-                  <td>
-                    <button
-                      @click="enableEdit(contract)"
-                      class="btn btn-primary btn-sm"
-                    >
-                      Edit
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="deleteContract(contract.id, index)"
-                      class="btn btn-danger btn-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="blue-darken-1"
+              variant="text"
+              @click="close"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="blue-darken-1"
+              variant="text"
+              @click="save"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-toolbar>
+  </template>
+  <template v-slot:item.actions="{ item }">
+    <v-icon
+      class="me-2"
+      size="small"
+      @click="editItem(item)"
+    >
+      mdi-pencil
+    </v-icon>
+    <v-icon
+      size="small"
+      @click="deleteItem(item)"
+    >
+      mdi-delete
+    </v-icon>
+  </template>
+  <template v-slot:no-data>
+    <v-btn
+      color="primary"
+      @click="initialize"
+    >
+      Reset
+    </v-btn>
+  </template>
+</v-data-table>
 
 
           </div>
@@ -191,6 +229,38 @@ import axios from "axios";
 export default {
   data() {
     return {
+
+      dialog: false,
+      dialogDelete: false,
+      editedIndex: -1,
+      editedItem: {
+        ref: '',
+        fournisseur:'',
+        structure:'',
+        Type_contract:'',
+        garantie:'',
+        date_acquisition:'',
+      },
+      defaultItem: {
+        ref: '',
+        fournisseur:'',
+        structure:'',
+        Type_contract:'',
+        garantie:'',
+        date_acquisition:'',
+      },
+      headers:[
+      { title: 'Reference', key:'ref' },
+      { title: 'Provider', key:'fournisseur' },
+      { title: 'Structure', key:'structure' },
+      { title: 'Type Contract', key:'Type_contract' },
+      { title: 'Guarantee', key:'garantie' },
+      { title: 'Acquisition Date  ', key:'date_acquisition' },
+      { title: 'Created At', key:'created_at' },  
+      { title: 'Actions', key: 'actions', sortable: false },
+
+      ],
+
       form: {
         ref: "",
         structure	: "",
@@ -222,7 +292,30 @@ export default {
     const queryParams = new URLSearchParams(window.location.search);
     this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
   },
+  computed: {
+        formTitle () {
+          return this.editedIndex === -1 ? 'New History' : 'Edit Contract'
+        },
+      },
   methods: {
+
+    close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+    editItem (item) {
+      console.log('sdasdfaf');
+      
+        this.editedIndex = this.contracts.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        console.log('sfaffd', this.editedIndex);
+        
+        this.dialog = true
+      },
+
     fetchContracts() {
       // Retrieve the token from localStorage or sessionStorage
     const token = localStorage.getItem('auth_token'); // Adjust this based on where you store the token
@@ -276,32 +369,12 @@ console.log('Token:', token);
           console.log(response);
             alert('Contract inserted successfully');
 
-            const insertedData = response.data;
+            const insertedData = response.data.data;
+            this.contracts.unshift(insertedData);
 
-            const tableRef = $(this.$refs.datatable).DataTable();
-            tableRef.row.add([
-                tableRef.rows().count() + 1, // Auto-increment the "Num" column
-                this.form.ref,
-                this.form.fournisseur,
-                this.form.structure,
-                this.form.garantie,
-                this.form.Type_contract,
-                this.form.date_acquisition,
-                `
-                    <button
-                        @click="enableEdit(contract)"
-                        class="btn btn-primary btn-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        @click="deleteContract(contract.id, index)"
-                        class="btn btn-danger btn-sm"
-                      >
-                        Delete
-                      </button>
-                ` // Actions column
-            ]).draw();
+
+           console.log(insertedData);
+           
 
             this.ref = '';
             this.fournisseur = '';
@@ -312,20 +385,33 @@ console.log('Token:', token);
           console.log(error.data);
         });
     },
-    enableEdit(contract) {
-      if (contract && contract.id) {
-      this.editRow = contract.id;
+    deleteItem (item) {
+        this.editedIndex = this.contracts.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
 
-      this.editableContract = { ...contract }; // Store a copy of the contract data
-  } else {
-    console.log('No valid contract data found!');
-  }
-    },
-    confirmEdit(id, index) {
-        const updatedContract = this.editableContract;
+      closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+    save() {
+
+      if ( !this.editedItem || !this.editedItem.ref || !this.editedItem.fournisseur || !this.editedItem.structure || !this.editedItem.Type_contract || !this.editedItem.garantie || !this.editedItem.date_acquisition) {
+        console.error('Error: Missing required fields in editedItem', this.editedItem);
+        alert('Please fill in all required fields before saving.');
+        return;
+      }
+
+        const updatedContract = this.editedItem;
         console.log('Updated Contract Before Sending:', updatedContract);
-        console.log(index);
-        console.log(id);
+        console.log(this.editedIndex);
+        const id = updatedContract.id
+        const index = this.editedIndex;
         
         
 
@@ -335,20 +421,24 @@ console.log('Token:', token);
               console.log(response);
               
             alert("Contract updated successfully");
-            this.contracts[index] = { ...updatedContract }; // Update contract in the contracts array
-            this.editRow = null; // Exit editing mode
+            Object.assign(this.contracts[index], updatedContract);
+
             })
             .catch((error) => {
             alert("Error updating contract");
+
+            
             console.log(error);
         });
+        this.close();
     },
     cancelEdit() {
       this.editRow = null;
       this.editableContract = {}; // Clear the temporary storage
     },
-    deleteContract(id, index) {
-      if (confirm("Are you sure you want to delete this contract?")) {
+    deleteItemConfirm () {
+      const index = this.editedIndex;
+      const id = this.editedItem.id;
         axios
           .delete(`/api/contract/${id}`)
           .then(() => {
@@ -359,7 +449,8 @@ console.log('Token:', token);
           .catch((error) => {
             alert("Error deleting contract");
           });
-      }
+          this.closeDelete();
+      
     },
     getStructure(){
       // Retrieve the token from localStorage or sessionStorage

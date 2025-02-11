@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Contract;
 use App\Models\Equipment;
+use Carbon\Carbon;
+
 
 
 class EquipmentController extends Controller
@@ -54,6 +56,9 @@ class EquipmentController extends Controller
                     'fournisseur' => $equipment->contract->fournisseur->nom ?? null, // Safely get fournisseur name
                     'employer' => $equipment->employer ?? null,
                     'structure' => $equipment->employer->structure->nom ?? null,
+                    'created_at' => Carbon::parse($equipment->created_at)->format('Y-m-d H:i:s'),
+
+
                 ];
             });
        
@@ -158,7 +163,7 @@ class EquipmentController extends Controller
             // Validate the incoming request
             $validated = $request->validate([
                 'num_serie' => 'required|string|',
-                'contract' => 'required|string|',
+                'contract.ref' => 'required|string|',
                 'Type' => 'required|string|',
                 'marque' => 'required|string|',
                 'etat'=> 'required|string|',
@@ -185,7 +190,21 @@ class EquipmentController extends Controller
             // Return a success response
             return response()->json([
                 'message' => 'equipment updated successfully.',
-                'equipment' => $equipment,
+                'equipment' => [
+                    'id' => $equipment->id_equipement,
+                    'num_serie' => $equipment->num_serie,
+                    'Type' => $equipment->Type,
+                    'marque' => $equipment->marque,
+                    'etat' => $equipment->etat,
+                    'status' => $equipment->status,
+                    'date_amortissement' => $equipment->date_amortissement,
+                    'contract' => $equipment->contract ?? null, // Safely return the contract object
+                    'contractRef' => $equipment->contract->ref ?? null, // Safely get the contract reference
+                    'fournisseur' => $equipment->contract->fournisseur->nom ?? null, // Safely get fournisseur name
+                    'employer' => $equipment->employer ?? null,
+                    'structure' => $equipment->employer->structure->nom ?? null,
+                    'created_at' => Carbon::parse($equipment->created_at)->format('Y-m-d H:i:s'),
+                ],
             ],200);
         } catch (\Exception $e) {
             // Log the error for debugging

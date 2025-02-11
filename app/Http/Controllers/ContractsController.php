@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Contract;
 use App\Models\Structure;
 use App\Models\Provider;
+use Carbon\Carbon;
+
 
 
 class ContractsController extends Controller
@@ -46,6 +48,8 @@ class ContractsController extends Controller
                     'structure' => $contract->structure->nom ?? null,
                     'fournisseur' => $contract->fournisseur->nom ?? null, 
                     'id_structure' => $contract->id_structure,
+                    'created_at' => Carbon::parse($contract->created_at)->format('Y-m-d H:i:s'),
+
                 ];
             });
        
@@ -110,7 +114,22 @@ class ContractsController extends Controller
             $contract->garantie = $validated['garantie'];
             $contract->save();
 
-            return response()->json(['message' => 'Contract Inserted successfully!','data' => $contract,], 200); 
+            return response()->json([
+                'message' => 'Contract Inserted successfully!',
+                'data' => [
+                    'id' => $contract->id_contract,
+                    'ref' => $contract->ref,
+                    'date_acquisition' => $contract->date_acquisition,
+                    'garantie' => $contract->garantie,
+                    'Type_contract' => $contract->Type_contract,
+                    'structure' => $contract->structure->nom ?? null,
+                    'fournisseur' => $contract->fournisseur->nom ?? null, 
+                    'id_structure' => $contract->id_structure,
+                    'created_at' => Carbon::parse($contract->created_at)->format('Y-m-d H:i:s'),
+                ]
+            ], 200);
+            
+            
 
         }catch (\Exception $e) {
             // Log the error for debugging

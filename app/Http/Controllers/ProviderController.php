@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Provider;
+use Carbon\Carbon;
+
 
 class ProviderController extends Controller
 {
@@ -32,6 +34,8 @@ class ProviderController extends Controller
                 return [
                     'id' => $provider->id_fournisseur,
                     'nom' => $provider->nom,
+                    'created_at' => Carbon::parse($provider->created_at)->format('Y-m-d H:i:s'), 
+
                 ];
             });
             
@@ -83,7 +87,14 @@ class ProviderController extends Controller
             $provider = new Provider;
             $provider->nom = $validated['fournisseur'];
             $provider->save();
-            return response()->json(['message' => 'Provider Inserted successfully!','data' => $provider,], 200); 
+            return response()->json(['message' => 'Provider Inserted successfully!',
+            'data' =>
+                [
+                    'id' => $provider->id_fournisseur,
+                    'nom' => $provider->nom,
+                    'created_at' => Carbon::parse($provider->created_at)->format('Y-m-d H:i:s'),
+                ]
+            ], 200); 
 
         }catch (\Exception $e) {
             // Log the error for debugging

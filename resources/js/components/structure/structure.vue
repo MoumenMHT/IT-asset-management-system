@@ -275,6 +275,11 @@ export default {
         })
       },
     save() {
+      if ( !this.editedItem || !this.editedItem.nom ) {
+        console.error('Error: Missing required fields in editedItem', this.editedItem);
+        alert('Please fill in all required fields before saving.');
+        return;
+      }
         const updatedstructure = this.editedItem;
         console.log('Updated structure Before Sending:', updatedstructure);
         

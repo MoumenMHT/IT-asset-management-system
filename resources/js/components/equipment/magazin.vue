@@ -25,16 +25,23 @@
               <label for="inputEmail4" class="form-label">Type</label>
                   <select class="form-select" aria-label="Default select example" v-model="form.Type" >
                     <option value="" disabled>Select a Type</option>
-                    <option  >jfkjoih</option>
                     <option  >PC</option>
+                    <option  >Monitor</option>
+                    <option  >Printer</option>
+                    <option  >Mouse</option>
+                    <option  >Keyboard</option>
+                    <option  >Laptop</option>
+                    <option  >All in one</option>
+
                   </select>
             </div>
             <div class="col-12">
               <label for="inputPassword4" class="form-label">Brand</label>
                   <select class="form-select" aria-label="Default select example" v-model="form.marque" >
                     <option value="" disabled>Select a Brand</option>
-                    <option  >jfkjoih</option>
-                  </select>
+                    <option v-for="fournisseur in fournisseurs" :key="fournisseur.id" :value="fournisseur.nom" >
+                      {{ fournisseur.nom }}
+                  </option>                  </select>
             </div>
             
             <div class="col-12">
@@ -64,118 +71,157 @@
         <div class="card-body">
           <h5 class="card-title">All Contracts</h5>
           <div id="Table">
-            <table class="table datatable" ref="datatable">
-              <thead>
-                <tr>
-                  <th>Num</th>
-                  <th>serial number</th>
-                  <th>Contract</th>
-                  <th>Type</th>
-                  <th>Brand</th>
-                  <th>Condition</th>
-                  <th>Status</th>
-                  <th>amortization date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-if="equipments.length === 0">
-                  <td colspan="5" class="text-center">No contracts available.</td>
-                </tr>
-                <tr v-for="(equipment, index) in equipments" :key="equipment.id">
-                  <template v-if="editRow === equipment.id">
-                    <!-- Editable Row -->
-                    <td>{{ index + 1 }}</td>
-                    <td>
-                      <input
-                        type="text"
-                        v-model="editableContract.num_serie"
-                        class="form-control"
-                      />
-                    </td>
-                    <td>
-                      <select class="form-select" aria-label="Default select example" v-model="editableContract.contract" >
-                        
-                        <option v-for="contract in contracts" :key="contract.id" :value="contract.ref" >
-                            {{ contract.ref }}
-                        </option>
-                      </select>
-                    </td>
-                    <td>
-                      <select class="form-select" aria-label="Default select example" v-model="editableContract.Type" >
-                        <option value="" disabled>Select a Type</option>
-                        <option  >jfkjoih</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select class="form-select" aria-label="Default select example" v-model="editableContract.marque" >
-                        <option value="" disabled>Select a Brand</option>
-                        <option  >jfkjoih</option>
-                      </select>
-                    </td>
-                    <td>
-                      <select class="form-select" aria-label="Default select example" v-model="editableContract.etat" >
-                        <option value="" disabled>Select a Condition</option>
-                        <option>New</option>
-                        <option>Used</option>
-                      </select>
-                    </td>
-                    <td>
-                      {{ editableContract.status }}
-                    </td>
-                    <td>
-                      <input
-                        type="date"
-                        v-model="editableContract.date_amortissement"
-                        class="form-control"
-                      />
-                    </td>
-                    <td>
-                      <button
-                        @click="confirmEdit(equipment.id, index)"
-                        class="btn btn-success btn-sm"
-                      >
-                        Confirm
-                      </button>
-                      &nbsp;
-                      <button
-                        @click="cancelEdit()"
-                        class="btn btn-secondary btn-sm"
-                      >
-                        Cancel
-                      </button>
-                    </td>
-                  </template>
-                  <template v-else>
-                    <!-- Normal Row -->
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ equipment.num_serie }}</td>
-                    <td>{{ equipment.contract.ref }}</td>
-                    <td>{{ equipment.Type }}</td>
-                    <td>{{ equipment.marque }}</td>
-                    <td>{{ equipment.etat }}</td>
-                    <td>{{ equipment.status }}</td>
-                    <td>{{ equipment.date_amortissement }}</td>
-                    
-                    <td>
-                      <button
-                        @click="enableEdit(equipment)"
-                        class="btn btn-primary btn-sm"
-                      >
-                        Edit
-                      </button>
-                      &nbsp;
-                      <button
-                        @click="deleteContract(equipment.id, index)"
-                        class="btn btn-danger btn-sm"
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </template>
-                </tr>
-              </tbody>
-            </table>
+            <v-data-table
+            :headers="headers"
+            :items="equipments"
+            :sort-by="[{ key: 'created_at', order: 'desc' }]"
+          >
+  <template v-slot:top>
+    <v-toolbar
+      flat
+    >
+      <v-toolbar-title>Structures Table</v-toolbar-title>
+     
+      <v-dialog
+        v-model="dialog"
+        max-width="500px"
+      >
+        
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">{{ formTitle }}</span>
+          </v-card-title>
+
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                  <v-text-field
+                    v-model="editedItem.num_serie"
+                    label="Serial Number"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                  <v-text-field
+                    v-model="editedItem.contract.ref"
+                    label="Contract"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-select
+                label="Select"
+                v-model="editedItem.Type"
+                :items="['PC', 'Monitor','Printer','Mouse','Keyboard','Laptop','All in one']"
+              ></v-select>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-select
+                label="Select"
+                v-model="editedItem.marque"
+                :items="fournisseurs"
+                item-title="nom"
+              ></v-select>
+                </v-col>
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-select
+                label="Select"
+                v-model="editedItem.etat"
+                :items="['New', 'Used']"
+              ></v-select>
+                </v-col>
+                
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                  <v-text-field
+                    v-model="editedItem.date_amortissement"
+                    label="amortization date"
+                    type="date"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-card-text>
+
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="blue-darken-1"
+              variant="text"
+              @click="close"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="blue-darken-1"
+              variant="text"
+              @click="save"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-toolbar>
+  </template>
+  <template v-slot:item.actions="{ item }">
+    <v-icon
+      class="me-2"
+      size="small"
+      @click="editItem(item)"
+    >
+      mdi-pencil
+    </v-icon>
+    <v-icon
+      size="small"
+      @click="deleteItem(item)"
+    >
+      mdi-delete
+    </v-icon>
+  </template>
+  <template v-slot:no-data>
+    <v-btn
+      color="primary"
+      @click="initialize"
+    >
+      Reset
+    </v-btn>
+  </template>
+</v-data-table>
+
           </div>
         </div>
       </div>
@@ -189,6 +235,30 @@ import axios from "axios";
 export default {
   data() {
     return {
+      dialog: false,
+      dialogDelete: false,
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+
+      },
+      defaultItem: {
+        name: '',
+
+      },
+      headers:[
+      { title: 'Serial Number', key:'num_serie' },
+      { title: 'Contract', key:'contract.ref' },
+      { title: 'Type', key:'Type' },
+      { title: 'Brand', key:'marque' },
+      { title: 'Condition', key:'etat' },
+      { title: 'Status', key:'status' },
+      { title: 'amortization date', key:'date_amortissement' },
+
+      { title: 'Created At', key:'created_at' },  
+      { title: 'Actions', key: 'actions', sortable: false },
+
+      ],
       form: {
         num_serie: "",
         contract:"",
@@ -199,6 +269,7 @@ export default {
       },
       equipments: [],
       contracts:[],
+      fournisseurs:[],
       editRow: null, // To track the row being edited
       editableEquipment: {
         num_serie: "",
@@ -213,8 +284,41 @@ export default {
   mounted() {
     this.getContract();
     this.fetchEquipments();
+    this.getFournisseur();
   },
   methods: {
+
+    closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+    deleteItem (item) {
+        this.editedIndex = this.equipments.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
+
+    editItem (item) {
+      console.log('sdasdfaf');
+      
+        this.editedIndex = this.equipments.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        console.log('sfaffd', this.editedIndex);
+        
+        this.dialog = true
+      },
+      close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
     fetchEquipments() {
       axios
         .get("/api/equipment/getEquipment")
@@ -293,22 +397,27 @@ export default {
     console.log('No valid contract data found!');
   }
     },
-    confirmEdit(id, index) {
-        const updatedEquipment = this.editableContract;
+    save() {
+        const updatedEquipment = this.editedItem;
+        const index = this.editedIndex;
+        
+        const id = updatedEquipment.id;
         console.log('Updated Contract Before Sending:', updatedEquipment);
         
 
         axios
             .put(`/api/equipment/${id}`, updatedEquipment)
-            .then(() => {
+            .then((response) => {
+              console.log(response);
+              
             alert("Contract updated successfully");
-            this.equipments[index] = { ...updatedEquipment }; 
-            this.editRow = null; // Exit editing mode
+            Object.assign(this.equipments[index], response.data.equipment);
             })
             .catch((error) => {
             alert("Error updating contract");
             console.log(error);
         });
+        this.close();
     },
     cancelEdit() {
       this.editRow = null;
@@ -337,6 +446,19 @@ export default {
           console.log(this.contracts);
           
           
+          
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error.data);
+        });
+
+    },
+    getFournisseur(){
+
+      axios
+        .get("/api/provider/getProvider")
+        .then((response) => {
+          this.fournisseurs = response.data;
           
         })
         .catch((error) => {
