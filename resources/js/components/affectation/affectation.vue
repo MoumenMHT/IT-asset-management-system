@@ -622,7 +622,7 @@ generatePdf(affectationId) {
         } 
 
         if (updatedhistory.equipement && updatedhistory.equipement.id) {
-            updatedhistory.equipement.id_equipement = updatedhistory.equipement.id;
+          updatedhistory.equipement.id_equipement = updatedhistory.equipement.id;
         }
 
 

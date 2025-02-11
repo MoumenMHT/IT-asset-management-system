@@ -306,12 +306,13 @@ export default {
       this.editablestructure = {}; // Clear the temporary storage
     },
     deleteItemConfirm () {
-      const id = this.editedItem.id
+      const id = this.editedItem.id;
+      const index = this.editedIndex;
         axios
           .delete(`/api/structure/${id}`)
           .then(() => {
             alert("structure deleted successfully");
-            this.structures.splice(this.editedIndex, 1);
+            this.structures.splice(index, 1);
             
           })
           .catch((error) => {
