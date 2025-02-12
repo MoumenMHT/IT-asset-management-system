@@ -178,9 +178,9 @@ class EquipmentController extends Controller
                     'message' => 'equipment not found.',
                 ], 404);
             }
-            $contract = Contract::where('ref', $validated['contract'])->first();
+            $contract = Contract::where('ref', $validated['contract.ref'])->first();
             if (!$contract) {
-                return response()->json(['message' => 'Structure not found!'], 200);
+                return response()->json(['message' => 'Contract not found!'], 200);
             }
 
             $equipment->id_contract	 = $contract->id_contract;

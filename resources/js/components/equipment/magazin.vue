@@ -286,6 +286,11 @@ export default {
     this.fetchEquipments();
     this.getFournisseur();
   },
+  computed: {
+        formTitle () {
+          return this.editedIndex === -1 ? 'New History' : 'Edit Equipment'
+        },
+      },
   methods: {
 
     closeDelete () {
