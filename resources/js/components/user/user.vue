@@ -11,12 +11,25 @@
             
             <div class="col-12">
                   <label class="form-label">Select employee</label>                 
-                    <select class="form-select" aria-label="Default select example" v-model="form.employer" >
-                      <option value="" disabled>Select a employes</option>
-                      <option v-for="employe in employes" :key="employe.id" :value="employe.nom">
-                       {{employe.prenom}}  {{ employe.nom }} 
-                      </option>
-                    </select>  
+                  <v-autocomplete
+                    v-model="form.employer"
+                    :items="employes"
+                    item-title="code"
+                    label="Code"
+                    variant="outlined"
+                    
+                    
+                    
+                  >
+                  <template v-slot:item="{ props, item }">
+                    <v-list-item
+                      v-bind="props"
+                      :subtitle="`Prenom: ${item.raw.prenom} - Nom: ${item.raw.nom} - Structure: ${item.raw.structure} - Fonction: ${item.raw.fonc}`"
+                      :title="item.raw.code"
+                    ></v-list-item>
+                  </template>
+               
+                  </v-autocomplete>  
             </div>
 
             <div class="col-12">
@@ -52,102 +65,125 @@
         <div class="card-body">
           <h5 class="card-title">All users</h5>
           <div id="Table">
-           <table class="table datatable" ref="datatable">
-            <thead>
-              <tr>
-                <th>Num</th>
-                <th>Employer Code</th>
-                <th>Username</th>
-                <th>Password</th>
-                <th>Type</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Display message when no users are available -->
-              <tr v-if="users.length === 0">
-                <td colspan="7" class="text-center">No users available.</td>
-              </tr>
-
-              <!-- Loop through users -->
-              <tr v-for="(user, index) in users" :key="user.id">
-                <!-- Editable Row -->
-                <template v-if="editRow === user.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>
-                    {{ user.code }}
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableuser.username"
-                      class="form-control"
-                      placeholder="user Reference"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableuser.password"
-                      class="form-control"
-                      placeholder="user Reference"
-                    />
-                  </td>
+            <v-data-table
+            :headers="headers"
+            :items="users"
+            :sort-by="[{ key: 'created_at', order: 'desc' }]"
+          >
+            <template v-slot:top>
+              <v-toolbar
+                flat
+              >
+                  <v-toolbar-title>Structures Table</v-toolbar-title>
                 
+                  <v-dialog
+                    v-model="dialog"
+                    max-width="500px"
+                  >
                   
-                  <td>
-                    <select class="form-select" aria-label="Default select example" v-model="form.type" >
-                      <option value="" disabled>{{user.type}}</option>
-                      <option  >jfkjoih</option>
-                      <option  >kkkk</option>
-                    </select>
-                  </td>
-                  
+                  <v-card>
+                    <v-card-title>
+                      <span class="text-h5">{{ formTitle }}</span>
+                    </v-card-title>
 
-                  <td>
-                    <button
-                      @click="confirmEdit(user.id, index)"
-                      class="btn btn-success btn-sm"
-                    >
-                      Confirm
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="cancelEdit()"
-                      class="btn btn-secondary btn-sm"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </template>
+                    <v-card-text>
+                      <v-container>
+                        <v-row>
+                          
+                          
+                          <v-col
+                          cols="12"
+                            md="4"
+                            sm="6"
+                          >
+                          <v-text-field
+                              v-model="editedItem.username"
+                              label="Username"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                          cols="12"
+                            md="4"
+                            sm="6"
+                          >
+                          <v-text-field
+                              v-model="editedItem.password"
+                              label="Password"
+                            ></v-text-field>
+                          </v-col>
+                          <v-col
+                          cols="12"
+                            md="4"
+                            sm="6"
+                          >
+                          <v-select
+                            label="Select"
+                            v-model="editedItem.type"
+                            :items="['admin', 'worker', 'viewer']"
+                          ></v-select>
+                          </v-col>
+                          
+                          
+                        </v-row>
+                      </v-container>
+                    </v-card-text>
 
-                <!-- Normal Row -->
-                <template v-else>
-                  <td>{{ index +1 }}</td>
-                  <td>{{ user.code }}</td>
-                  <td>{{ user.username }}</td>
-                  <td>{{ user.password }}</td>
-                  <td>{{ user.type }}</td>
-
-                  <td>
-                    <button
-                      @click="enableEdit(user)"
-                      class="btn btn-primary btn-sm"
-                    >
-                      Edit
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="deleteuser(user.id, index)"
-                      class="btn btn-danger btn-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="close"
+                      >
+                        Cancel
+                      </v-btn>
+                      <v-btn
+                        color="blue-darken-1"
+                        variant="text"
+                        @click="save"
+                      >
+                        Save
+                      </v-btn>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+                <v-dialog v-model="dialogDelete" max-width="500px">
+                  <v-card>
+                    <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+                      <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
+              </v-toolbar>
+            </template>
+            <template v-slot:item.actions="{ item }">
+              <v-icon
+                class="me-2"
+                size="small"
+                @click="editItem(item)"
+              >
+                mdi-pencil
+              </v-icon>
+              <v-icon
+                size="small"
+                @click="deleteItem(item)"
+              >
+                mdi-delete
+              </v-icon>
+            </template>
+            <template v-slot:no-data>
+              <v-btn
+                color="primary"
+                @click="initialize"
+              >
+                Reset
+              </v-btn>
+            </template>
+          </v-data-table>
 
 
           </div>
@@ -163,6 +199,28 @@ import axios from "axios";
 export default {
   data() {
     return {
+
+      dialog: false,
+      dialogDelete: false,
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+
+      },
+      defaultItem: {
+        name: '',
+
+      },
+      headers:[
+      { title: 'Code', key:'code' },
+      { title: 'Username', key:'username' },
+      { title: 'Password', key:'password' },
+      { title: 'Type', key:'type' },
+      { title: 'Created At', key:'created_at' },  
+      { title: 'Actions', key: 'actions', sortable: false },
+
+      ],
+
       form: {
             username: '',
             password: '',
@@ -188,9 +246,43 @@ export default {
         const queryParams = new URLSearchParams(window.location.search);
         this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
   },
+  computed: {
+        formTitle () {
+          return this.editedIndex === -1 ? 'New History' : 'Edit User'
+        },
+      },
   methods: {
 
-    
+    closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+    deleteItem (item) {
+        this.editedIndex = this.users.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
+
+    editItem (item) {
+      console.log('sdasdfaf');
+      
+        this.editedIndex = this.users.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        console.log('sfaffd', this.editedIndex);
+        
+        this.dialog = true
+      },
+      close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
 
     
     fetchUsers() {
@@ -199,13 +291,8 @@ export default {
         .then((response) => {
           this.users = response.data;
           
-          console.log(response.data);
-          if(this.users){
-            this.$nextTick(() => {
-              
-              this.initializeDataTable();
-            });
-          }
+          console.log(response);
+          
           
           
         })
@@ -227,19 +314,23 @@ export default {
       });
     },
       submitForm() {
+            console.log('before sending',this.form);
             
             axios.post('/api/userCrud', this.form)
                 .then(response => {
                     // Handle successful registration
                     alert(response.data.message);
                     console.log(response.data.debug);
+                    const insertedData = response.data.data;
+
+                    console.log(insertedData);  
+                    this.users.unshift(insertedData);
                     
                 })
                 .catch(error => {
                     console.log(error);
-                    
                 });
-},
+      },
     enableEdit(user) {
       if (user && user.id) {
       this.editRow = user.id;
@@ -249,13 +340,13 @@ export default {
     console.log('No valid user data found!');
   }
     },
-    confirmEdit(id, index) {
-        let updateduser = this.editableuser;
+    save() {  
+        let updateduser = this.editedItem;
        
         console.log('Updated user Before Sending:', updateduser);
-        console.log(index);
-        console.log(id);
         
+        const id = updateduser.id;
+        const index = this.editedIndex;
         
 
         axios
@@ -263,26 +354,26 @@ export default {
             .then((response) => {
               
             alert(response.data.message);
-            console.log(response.data.user);
+            console.log(response);
             
             
-            this.users[index] = { ...updateduser }; // Update user in the users array
-            this.users[index].password = response.data.user;
+            Object.assign(this.users[index], response.data.user);
             
             
-            this.editRow = null; // Exit editing mode
             })
             .catch((error) => {
             alert("Error updating user");
             console.log(error);
         });
+        this.close();
     },
     cancelEdit() {
       this.editRow = null;
       this.editableuser = {}; // Clear the temporary storage
     },
-    deleteuser(id, index) {
-      if (confirm("Are you sure you want to delete this user?")) {
+    deleteItemConfirm() {
+      const id = this.editedItem.id;
+        const index = this.editedIndex;
         axios
           .delete(`/api/userCrud/${id}`)
           .then((response) => {
@@ -295,7 +386,8 @@ export default {
           .catch((error) => {
             alert("Error deleting user");
           });
-      }
+          this.closeDelete();
+      
     },
     getEmployer(){
         

@@ -50,116 +50,142 @@
         <div class="card-body">
           <h5 class="card-title">All employers</h5>
           <div id="Table">
-           <table class="table datatable" ref="datatable">
-            <thead>
-              <tr>
-                <th>Num</th>
-                <th>First Name</th>
-                <th> Name</th>
-                <th>Fonction</th>
-                <th>Code</th>
-                <th>Structure</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Display message when no employers are available -->
-              <tr v-if="employers.length === 0">
-                <td colspan="7" class="text-center">No employers available.</td>
-              </tr>
+            <v-data-table
+            :headers="headers"
+            :items="employers"
+            :sort-by="[{ key: 'created_at', order: 'desc' }]"
+          >
+  <template v-slot:top>
+    <v-toolbar
+      flat
+    >
+      <v-toolbar-title>Structures Table</v-toolbar-title>
+     
+      <v-dialog
+        v-model="dialog"
+        max-width="500px"
+      >
+        
+        <v-card>
+          <v-card-title>
+            <span class="text-h5">{{ formTitle }}</span>
+          </v-card-title>
 
-              <!-- Loop through employers -->
-              <tr v-for="(employer, index) in employers" :key="employer.id">
-                <!-- Editable Row -->
-                <template v-if="editRow === employer.id">
-                  <td>{{ index + 1 }}</td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableemployer.prenom"
-                      class="form-control"
-                      placeholder="Employer First Name"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableemployer.nom"
-                      class="form-control"
-                      placeholder="Employer Name"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableemployer.fonc"
-                      class="form-control"
-                      placeholder="Wmployer Fonction"
-                    />
-                  </td>
-                  <td>
-                    <input
-                      type="text"
-                      v-model="editableemployer.code"
-                      class="form-control"
-                      placeholder="employer Code"
-                    />
-                  </td>
-                  
-                  <td>
-                    <select class="form-select" aria-label="Default select example" v-model="editableemployer.structure" >
-                      <option value="" disabled>Select a Structure</option>
-                      <option v-for="structure in structures" :key="structure.id" :value="structure.nom">
-                        {{ structure.nom }}
-                      </option>
-                    </select>
-                  </td>
-                  
+          <v-card-text>
+            <v-container>
+              <v-row>
+                <v-col
+                  cols="12"
+                  md="4"
+                  sm="6"
+                >
+                  <v-text-field
+                    v-model="editedItem.prenom"
+                    label="First Name"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-text-field
+                    v-model="editedItem.nom"
+                    label="Name"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-text-field
+                    v-model="editedItem.fonc"
+                    label="Fonction"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-text-field
+                    v-model="editedItem.code"
+                    label="Code"
+                  ></v-text-field>
+                </v-col>
+                <v-col
+                cols="12"
+                  md="4"
+                  sm="6"
+                >
+                <v-text-field
+                    v-model="editedItem.structure"
+                    label="Structure"
+                  ></v-text-field>
+                </v-col>
+                
+                
+              </v-row>
+            </v-container>
+          </v-card-text>
 
-                  <td>
-                    <button
-                      @click="confirmEdit(employer.id, index)"
-                      class="btn btn-success btn-sm"
-                    >
-                      Confirm
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="cancelEdit()"
-                      class="btn btn-secondary btn-sm"
-                    >
-                      Cancel
-                    </button>
-                  </td>
-                </template>
-
-                <!-- Normal Row -->
-                <template v-else>
-                  <td>{{ index +1 }}</td>
-                  <td>{{ employer.prenom }}</td>
-                  <td>{{ employer.nom }}</td>
-                  <td>{{ employer.fonc }}</td>
-                  <td>{{ employer.code }}</td>
-                  <td>{{ employer.structure }}</td>
-                  <td>
-                    <button
-                      @click="enableEdit(employer)"
-                      class="btn btn-primary btn-sm"
-                    >
-                      Edit
-                    </button>
-                    &nbsp;
-                    <button
-                      @click="deleteemployer(employer.id, index)"
-                      class="btn btn-danger btn-sm"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </template>
-              </tr>
-            </tbody>
-          </table>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="blue-darken-1"
+              variant="text"
+              @click="close"
+            >
+              Cancel
+            </v-btn>
+            <v-btn
+              color="blue-darken-1"
+              variant="text"
+              @click="save"
+            >
+              Save
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-card>
+          <v-card-title class="text-h5">Are you sure you want to delete this item?</v-card-title>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue-darken-1" variant="text" @click="closeDelete">Cancel</v-btn>
+            <v-btn color="blue-darken-1" variant="text" @click="deleteItemConfirm">OK</v-btn>
+            <v-spacer></v-spacer>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-toolbar>
+  </template>
+  <template v-slot:item.actions="{ item }">
+    <v-icon
+      class="me-2"
+      size="small"
+      @click="editItem(item)"
+    >
+      mdi-pencil
+    </v-icon>
+    <v-icon
+      size="small"
+      @click="deleteItem(item)"
+    >
+      mdi-delete
+    </v-icon>
+  </template>
+  <template v-slot:no-data>
+    <v-btn
+      color="primary"
+      @click="initialize"
+    >
+      Reset
+    </v-btn>
+  </template>
+</v-data-table>
 
 
           </div>
@@ -175,6 +201,30 @@ import axios from "axios";
 export default {
   data() {
     return {
+
+      dialog: false,
+      dialogDelete: false,
+      editedIndex: -1,
+      editedItem: {
+        name: '',
+
+      },
+      defaultItem: {
+        name: '',
+
+      },
+      headers:[
+      { title: 'First Name', key:'prenom' },
+      { title: 'Name', key:'nom' },
+      { title: 'Fonction', key:'fonc' },
+      { title: 'Code', key:'code' },
+      { title: 'Structure', key:'structure' },
+
+      { title: 'Created At', key:'created_at' },  
+      { title: 'Actions', key: 'actions', sortable: false },
+
+      ],
+
       form: {
         nom: "",
         prenom: "",
@@ -203,7 +253,45 @@ export default {
         const queryParams = new URLSearchParams(window.location.search);
         this.name = queryParams.get('name'); // Get the 'name' parameter from the URL
   },
+  computed: {
+        formTitle () {
+          return this.editedIndex === -1 ? 'New History' : 'Edit Employer'
+        },
+      },
   methods: {
+
+
+    closeDelete () {
+        this.dialogDelete = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
+    deleteItem (item) {
+        this.editedIndex = this.employers.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        this.dialogDelete = true
+      },
+
+    editItem (item) {
+      console.log('sdasdfaf');
+      
+        this.editedIndex = this.employers.indexOf(item)
+        this.editedItem = Object.assign({}, item)
+        console.log('sfaffd', this.editedIndex);
+        
+        this.dialog = true
+      },
+      close () {
+        this.dialog = false
+        this.$nextTick(() => {
+          this.editedItem = Object.assign({}, this.defaultItem)
+          this.editedIndex = -1
+        })
+      },
+
     fetchemployers() {
       axios
         .get("/api/employer/getEmployer")
@@ -245,33 +333,12 @@ export default {
         .then(response => {
           console.log(response.data);
             alert('employer inserted successfully');
+            const insertedData = response.data.data;
 
-            const insertedData = response.data;
+            console.log(insertedData);
 
-            const tableRef = $(this.$refs.datatable).DataTable();
-            tableRef.row.add([
-                tableRef.rows().count() + 1, // Auto-increment the "Num" column
-                this.form.nom,
-                this.form.prenom,
-                this.form.fonc,
-                this.form.code,
-                this.form.structure,
-                `
-                    <button
-                        @click="enableEdit(employer)"
-                        class="btn btn-primary btn-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        @click="deleteemployer(employer.id, index)"
-                        class="btn btn-danger btn-sm"
-                      >
-                        Delete
-                      </button>
-                ` // Actions column
-            ]).draw();
-
+            this.employers.unshift(insertedData);
+            
             this.ref = '';
             this.employer = '';
             this.stremployer = '';
@@ -289,12 +356,18 @@ export default {
     console.log('No valid employer data found!');
   }
     },
-    confirmEdit(id, index) {
-        const updatedemployer = this.editableemployer;
+    save() {
+      if ( !this.editedItem  || !this.editedItem.nom || !this.editedItem.prenom || !this.editedItem.code || !this.editedItem.fonc || !this.editedItem.structure  ) {
+        console.error('Error: Missing required fields in editedItem', this.editedItem);
+        alert('Please fill in all required fields before saving.');
+        return;
+      }
+        const updatedemployer = this.editedItem;
         
         console.log('Updated employer Before Sending:', updatedemployer);
-        console.log(index);
-        console.log(id);
+        
+        const id = updatedemployer.id;
+        const index = this.editedIndex;
         
         
 
@@ -305,7 +378,7 @@ export default {
               
             alert("employer updated successfully");
             
-            this.employers[index] = { ...updatedemployer }; // Update employer in the employers array
+            Object.assign(this.employers[index], response.data.employer);
             
             
             this.editRow = null; // Exit editing mode
@@ -314,13 +387,15 @@ export default {
             alert("Error updating employer");
             console.log(error);
         });
+        this.close();
     },
     cancelEdit() {
       this.editRow = null;
       this.editableemployer = {}; // Clear the temporary storage
     },
-    deleteemployer(id, index) {
-      if (confirm("Are you sure you want to delete this employer?")) {
+    deleteItemConfirm() {
+        const id = this.editedItem.id;
+        const index = this.editedIndex;
         axios
           .delete(`/api/employe/${id}`)
           .then(() => {
@@ -331,7 +406,7 @@ export default {
           .catch((error) => {
             alert("Error deleting employer");
           });
-      }
+      this.closeDelete();
     },
     getStructure(){
 

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use app\Models\User;
 use App\Models\Structure;
 Use App\Models\Employer;
+use Carbon\Carbon;
+
 
 class EmployerController extends Controller
 {
@@ -42,7 +44,9 @@ class EmployerController extends Controller
                     'fonc' => $employer->fonc,
                     'code' => $employer->code,
                     'structure' => $employer->structure->nom ?? null,
-                    'user' => $employer->user->username ?? 'null', 
+                    'user' => $employer->user->username ?? 'null',
+                    'created_at' => Carbon::parse($employer->created_at)->format('Y-m-d H:i:s'),
+ 
                 ];
             });
        
@@ -101,7 +105,16 @@ class EmployerController extends Controller
             $employer->code = $validated['code'];
             $employer->save();
 
-            return response()->json(['message' => 'Employer Inserted successfully!','data' => $employer,], 200); 
+            return response()->json(['message' => 'Employer Inserted successfully!','data' => [
+                    'id' => $employer->id_employer,
+                    'nom' => $employer->nom,
+                    'prenom' => $employer->prenom,
+                    'fonc' => $employer->fonc,
+                    'code' => $employer->code,
+                    'structure' => $employer->structure->nom ?? null,
+                    'user' => $employer->user->username ?? 'null',
+                    'created_at' => Carbon::parse($employer->created_at)->format('Y-m-d H:i:s'),
+            ],], 200); 
 
         }catch (\Exception $e) {
             // Log the error for debugging
@@ -174,7 +187,16 @@ class EmployerController extends Controller
             // Return a success response
             return response()->json([
                 'message' => 'employer updated successfully.',
-                'employer' => $employer,
+                'employer' => [
+                    'id' => $employer->id_employer,
+                    'nom' => $employer->nom,
+                    'prenom' => $employer->prenom,
+                    'fonc' => $employer->fonc,
+                    'code' => $employer->code,
+                    'structure' => $employer->structure->nom ?? null,
+                    'user' => $employer->user->username ?? 'null',
+                    'created_at' => Carbon::parse($employer->created_at)->format('Y-m-d H:i:s'),
+                ],
             ],200);
         } catch (\Exception $e) {
             // Log the error for debugging
