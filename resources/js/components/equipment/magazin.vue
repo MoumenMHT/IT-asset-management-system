@@ -14,12 +14,15 @@
             </div>
             <div class="col-12">
               <label for="inputEmail4" class="form-label">Contract</label>
-                  <select class="form-select" aria-label="Default select example" v-model="form.contract" >
-                    <option value="" disabled>Select a Contract</option>
-                    <option v-for="contract in contracts" :key="contract.id" :value="contract.ref" >
-                        {{ contract.ref }}
-                    </option>
-                  </select>
+              <v-autocomplete
+                    v-model="form.contract"
+                    :items="contracts"
+                    item-title="ref"
+                    label="Code"
+                    variant="outlined"
+                    
+                  >
+                  </v-autocomplete>
             </div>
             <div class="col-12">
               <label for="inputEmail4" class="form-label">Type</label>
@@ -106,14 +109,18 @@
                   ></v-text-field>
                 </v-col>
                 <v-col
-                  cols="12"
-                  md="4"
+                  cols="32"
+                  md="24"
                   sm="6"
                 >
-                  <v-text-field
-                    v-model="editedItem.contract.ref"
-                    label="Contract"
-                  ></v-text-field>
+                <v-autocomplete
+                    v-model="editedItem.contractRef"
+                    :items="contracts"
+                    item-title="ref"
+                    label="Reference"
+                    
+                  >
+                  </v-autocomplete>
                 </v-col>
                 <v-col
                   cols="12"
@@ -358,34 +365,12 @@ export default {
           
             alert('Equipment inserted successfully');
 
-            const insertedData = response.data;
+            const insertedData = response.data.data;
 
-            const tableRef = $(this.$refs.datatable).DataTable();
-            this.form.status = this.form.etat;
-            tableRef.row.add([
-                tableRef.rows().count() + 1, // Auto-increment the "Num" column
-                this.form.num_serie,
-                this.form.contract,
-                this.form.Type,
-                this.form.marque,
-                this.form.etat,
-                this.form.status,
-                this.form.date_amortissement,
-                `
-                    <button
-                        @click="enableEdit(contract)"
-                        class="btn btn-primary btn-sm"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        @click="deleteContract(contract.id, index)"
-                        class="btn btn-danger btn-sm"
-                      >
-                        Delete
-                      </button>
-                ` // Actions column
-            ]).draw();
+            console.log(insertedData);
+            
+            this.equipments.unshift(insertedData);
+
 
             
         })
@@ -403,6 +388,13 @@ export default {
   }
     },
     save() {
+
+      if ( !this.editedItem  || !this.editedItem.contractRef || !this.editedItem.num_serie || !this.editedItem.Type || !this.editedItem.marque || !this.editedItem.etat || !this.editedItem.status || !this.editedItem.date_amortissement ) {
+        console.error('Error: Missing required fields in editedItem', this.editedItem);
+        alert('Please fill in all required fields before saving.');
+        return;
+      }
+
         const updatedEquipment = this.editedItem;
         const index = this.editedIndex;
         
@@ -413,7 +405,7 @@ export default {
         axios
             .put(`/api/equipment/${id}`, updatedEquipment)
             .then((response) => {
-              console.log(response);
+              console.log(this.equipments);
               
             alert("Contract updated successfully");
             Object.assign(this.equipments[index], response.data.equipment);
@@ -428,8 +420,11 @@ export default {
       this.editRow = null;
       this.editableContract = {}; // Clear the temporary storage
     },
-    deleteContract(id, index) {
-      if (confirm("Are you sure you want to delete this contract?")) {
+    deleteItemConfirm() {
+
+      const id = this.editedItem.id;
+      const index = this.editedIndex;
+
         axios
           .delete(`/api/equipment/${id}`)
           .then((response) => {
@@ -440,7 +435,7 @@ export default {
           .catch((error) => {
             alert("Error deleting contract");
           });
-      }
+      this.closeDelete();
     },
     getContract(){
 

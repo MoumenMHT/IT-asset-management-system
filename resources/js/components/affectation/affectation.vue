@@ -186,24 +186,36 @@
   <v-data-table
     :headers="headers"
     :items="historys"
+    :search="search"
     :sort-by="[{ key: 'created_at', order: 'desc' }]"
   >
+  
     <template v-slot:top>
+      
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Equipments History</v-toolbar-title>
+           
         
-        <v-spacer></v-spacer>
+      <v-text-field
+      v-model="search"
+      label="Search"
+      prepend-inner-icon="mdi-magnify"
+    >
+    </v-text-field>
+        
         <v-dialog
           v-model="dialog"
           max-width="500px"
         >
           
           <v-card>
+            
+            
             <v-card-title>
               <span class="text-h5">{{ formTitle }}</span>
             </v-card-title>
+
 
             <v-card-text>
               <v-container>
@@ -384,6 +396,7 @@ export default {
 
   data() {
     return {
+      search:'',
       dialog: false,
       dialogDelete: false,
       editedIndex: -1,

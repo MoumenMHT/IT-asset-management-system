@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Employer;
+use Carbon\Carbon;
+
 
 class UsersController extends Controller
 {
@@ -46,7 +48,7 @@ class UsersController extends Controller
                     'username' => $employer->user->username,
                     'password' => $employer->user->password,
                     'type' => $employer->user->Type,
-
+                    'created_at' => Carbon::parse($employer->created_at)->format('Y-m-d H:i:s'),
                 ];
             });
        
@@ -105,7 +107,7 @@ class UsersController extends Controller
                 return response()->json(['message' => 'Username already exists, please choose another one.'], 200);
             }
     
-            $employer = Employer::where('nom', $validated['employer'])->first();
+            $employer = Employer::where('code', $validated['employer'])->first();
     
             if (!$employer) {
                 return response()->json(['message' => 'Employer not found.'], 200);
@@ -120,11 +122,21 @@ class UsersController extends Controller
             $user->username = $validated['username'];
             $user->type = $validated['type'];
             $user->password = Hash::make($validated['password']); // Hash the password
-                $user->save();
+            $user->save();
     
             $employer->id_user = $user->id_user;
             $employer->save();
-            return response()->json(['message' => 'User registered successfully!','debug'=> $employer], 200);
+            return response()->json(['message' => 'User registered successfully!','debug'=> $employer , 
+                'data' =>
+                    [
+                    'id' => $user->id_user, 
+                    'code' => $employer->code,
+                    'username' => $user->username,
+                    'password' => $user->password,
+                    'type' => $user->type,
+                    'created_at' => Carbon::parse($user->created_at)->format('Y-m-d H:i:s'),
+                    ]
+                ], 200);
 
         }
         catch (\Exception $e) {
@@ -188,7 +200,7 @@ class UsersController extends Controller
             }
 
 
-            $validated['password'] = hash('md5',$validated['password']);
+            $validated['password'] =Hash::make($validated['password']);
 
            
             // Update the user
@@ -197,7 +209,13 @@ class UsersController extends Controller
             // Return a success response
             return response()->json([
                 'message' => 'user updated successfully.',
-                'user' => $user->password,
+                'user' => [
+                    'id' => $user->id_user, 
+                    'username' => $user->username,
+                    'password' => $user->password,
+                    'type' => $user->Type,
+                    'created_at' => Carbon::parse($user->created_at)->format('Y-m-d H:i:s'),
+                ],
             ],200);
         } catch (\Exception $e) {
             // Log the error for debugging
