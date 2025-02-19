@@ -72,18 +72,24 @@
       <!-- Table Section -->
       <div class="card">
         <div class="card-body">
-          <h5 class="card-title">All Contracts</h5>
+          <h5 class="card-title">All Equipments</h5>
           <div id="Table">
             <v-data-table
             :headers="headers"
             :items="equipments"
+            :search="search"
             :sort-by="[{ key: 'created_at', order: 'desc' }]"
           >
   <template v-slot:top>
     <v-toolbar
       flat
     >
-      <v-toolbar-title>Structures Table</v-toolbar-title>
+    <v-text-field
+    v-model="search"
+    label="Search"
+    prepend-inner-icon="mdi-magnify"
+  >
+  </v-text-field> 
      
       <v-dialog
         v-model="dialog"
@@ -242,6 +248,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      search:'',
       dialog: false,
       dialogDelete: false,
       editedIndex: -1,
@@ -267,6 +274,7 @@ export default {
 
       ],
       form: {
+        
         num_serie: "",
         contract:"",
         Type: "",

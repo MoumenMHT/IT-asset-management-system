@@ -52,35 +52,27 @@
       </div>
       <div class="col-12">
         <div class="card">
-        
-
-        <div class="card-body pb-0">
-          <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>
-                      <a class="dropdown-item" @click="EquipmentEmployerPieChart('All')">All</a>
-                    </h6>
-                  </li>
-                  <li v-for="(structure, index) in structures" :key="index">
-                    <a class="dropdown-item" @click="EquipmentEmployerPieChart(structure.nom)">
-                      {{ structure.nom }}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-          <h5 class="card-title">Number of Used Equipment by Structure </h5>
-
-          <div class="chart-container">
-            <canvas  id="EquipementEmployerChart"> </canvas>
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h5 class="card-title mb-0">Number of Used Equipment by Structure</h5>
+              <a class="btn btn-primary" @click="EquipmentEmployerPieChart('All')">All</a>
+            </div>
+            <v-autocomplete
+              v-model="selectedStructure"
+              :items="structures"
+              item-title="nom"
+              label="Structure"
+              variant="outlined"
+              return-object
+              class="mb-4"
+              @update:model-value="() => selectedStructure ? EquipmentEmployerPieChart(selectedStructure.nom) : null"
+              ></v-autocomplete>
+            <div class="chart-container">
+              <canvas id="EquipementEmployerChart"></canvas>
+            </div>
           </div>
-
         </div>
         
-      </div>
         <div class="card recent-sales overflow-auto">
   <div class="filter">
     <a class="icon cursor-pointer" data-bs-toggle="dropdown">
@@ -133,38 +125,49 @@
 
               </div>
             </div>
-            <div class="card">
-        
-
-        <div class="card-body pb-0">
-          <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  
-                  <li class="cursor-pointer">
-                    <a class="dropdown-item" @click="ContractEquipmentDisponible('Dissponible')">
-                      Available
+            <<div class="card shadow-sm rounded-3">
+              <div class="card-body pb-0">
+                <div class="d-flex justify-content-end mb-2">
+                  <a class="icon text-secondary" href="#" data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                    <li>
+                      <a class="dropdown-item" @click="type = 'Dissponible'">Available</a>
+                    </li>
+                    <li>
+                      <a class="dropdown-item" @click="type = 'Indissponible'">Unavailable</a>
+                    </li>
+                  </ul>
+                </div>
+            
+                <h5 class="card-title mb-3">Number of equipment available/unavailable in each contract</h5>
+            
+                <div class="row g-2 align-items-center mb-3">
+                  <div class="col">
+                    <v-autocomplete
+                      v-model="selectedContract"
+                      :items="contracts"
+                      item-title="ref"
+                      label="Reference"
+                      variant="outlined"
+                      class="w-100"
+                      @update:model-value="() => selectedContract ? ContractEquipmentDisponible(selectedContract) : null"
+                    ></v-autocomplete>
+                  </div>
+                  <div class="col-auto">
+                    <a class="btn btn-primary w-100 h-100 d-flex align-items-center justify-content-center" @click="setAll()">
+                      All
                     </a>
-                  </li>
-                  <li class="cursor-pointer">
-                    <a class="dropdown-item" @click="ContractEquipmentDisponible('Indissponible')">
-                      Unavailable
-                    </a>
-                  </li>
-                </ul>
+                  </div>
+                </div>
+            
+                <div class="chart-container">
+                  <canvas id="ContractEquipmentDisponibleChart"> </canvas>
+                </div>
               </div>
-          <h5 class="card-title">Number of equipment available/unavailable in each contract </h5>
-
-          <div class="chart-container">
-            <canvas id="ContractEquipmentDisponibleChart"> </canvas>
-          </div>
-
-        </div>  
-        
-      </div>
-
+            </div>
+            
             
     </div>
     
@@ -210,32 +213,28 @@
         
 
         <div class="card-body pb-0">
-          <div class="filter">
-                <a class="icon" href="#" data-bs-toggle="dropdown">
-                  <i class="bi bi-three-dots"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                  <li class="dropdown-header text-start">
-                    <h6>
-                      <a class="dropdown-item" @click="StructureEuipmentTypeChart('All')">All</a>
-                    </h6>
-                  </li>
-                  <li v-for="(structure, index) in structures" :key="index">
-                    <a class="dropdown-item" @click="StructureEuipmentTypeChart(structure.nom)">
-                      {{ structure.nom }}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-          <h5 class="card-title">Types of Equipment in Structure </h5>
-
-          <div class="chart-container">
-            <canvas  id="StructureEuipmentType"> </canvas>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="card-title mb-0">Types of Equipment in Structure</h5>
+            <a class="btn btn-primary" @click="StructureEuipmentTypeChart('All')">All</a>
           </div>
+          <v-autocomplete
+            v-model="selectedStructure"
+            :items="structures"
+            item-title="nom"
+            label="Structure"
+            variant="outlined"
+            return-object
+            class="mb-4"
+            @update:model-value="() => selectedStructure ? StructureEuipmentTypeChart(selectedStructure.nom) : null"
+            ></v-autocomplete>
+
+          
 
         </div>
 
-
+        <div class="chart-container">
+          <canvas  id="StructureEuipmentType"> </canvas>
+        </div>
         
         </div>
                   <div class="card recent-sales overflow-auto">
@@ -318,6 +317,11 @@
     export default {
       data() {
         return {
+          type: 'Dissponible',
+        selectedContract: null,
+        selectedStructure: {
+          nom: '',
+        },
         activitys: [],
 
         columnsactivities: [
@@ -418,6 +422,9 @@
        
       },  
       watch: {
+        type(){
+          this.ContractEquipmentDisponible(this.selectedContract);
+        },
         uniqueTypes(newUniqueTypes) {
 
           if (newUniqueTypes.length > 0) {
@@ -439,6 +446,13 @@
         
       },
       methods:{
+
+
+        setAll(){
+          this.selectedContract = 'all';
+          this.ContractEquipmentDisponible('all');
+        },
+
         getActivity(){
 
           axios
@@ -889,35 +903,56 @@ StructureEuipmentTypeChart(structure) {
     },
   });
 },
-ContractEquipmentDisponible(type) {
+ContractEquipmentDisponible(contract) {
   // Destroy existing chart instance (if any) to avoid duplicates
   if (this.ContractEquipmentDisponibleInstance) {
     this.ContractEquipmentDisponibleInstance.destroy();
   }
 
+  let type = this.type;
+  console.log('type', type);
+  console.log('contract', contract);
+  
+  
   // Extract labels from the structures
-  const labels = this.contracts.map(structure => structure.ref);
-  console.log('label ',labels);
-  
-let data = 0;
-  if(type ==='Indissponible'){
 
-   data = this.contracts.map(contract => {
-    const count = this.IndisponibleEquipments.reduce((acc, item) => {
-      return item.contract.id_contract === contract.id ? acc + 1 : acc;
-    }, 0);
-    return count; 
+  let labels;
+
+if (contract === 'all') {
+  labels = this.contracts.map(contract => contract.ref);
+  console.log('label ', labels);
+} else {
+  labels = contract;
+  console.log('label ', labels);
+}
+
+let data = 0;
+if (type === 'Indissponible') {
+  data = this.contracts.map(contractItem => {
+    // Only count equipment for the selected contract
+    if (contract === 'all' || contractItem.ref === contract) {
+      const count = this.IndisponibleEquipments.reduce((acc, item) => {
+        return item.contract.id_contract === contractItem.id ? acc + 1 : acc;
+      }, 0);
+      return count;
+    }
+    return 0;
   });
-  }else{
-   data = this.contracts.map(contract => {
-    const count = this.DisponibleEquipments.reduce((acc, item) => {
-      return item.contract.id_contract === contract.id ? acc + 1 : acc;
-    }, 0);
-    return count; 
+} else {
+  data = this.contracts.map(contractItem => {
+    // Only count equipment for the selected contract
+    if (contract === 'all' || contractItem.ref === contract) {
+      const count = this.DisponibleEquipments.reduce((acc, item) => {
+        return item.contract.id_contract === contractItem.id ? acc + 1 : acc;
+      }, 0);
+      return count;
+    }
+    return 0;
   });
-  }
+}
+
   
-  console.log('dataaa',this.disponibleCount);
+  console.log('dataaa',data);
   
 
   // Create the chart

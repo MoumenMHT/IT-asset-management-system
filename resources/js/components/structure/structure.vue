@@ -30,13 +30,19 @@
             <v-data-table
               :headers="headers"
               :items="structures"
+              :search="search"
               :sort-by="[{ key: 'created_at', order: 'desc' }]"
             >
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>Structures Table</v-toolbar-title>
+      <v-text-field
+      v-model="search"
+      label="Search"
+      prepend-inner-icon="mdi-magnify"
+    >
+    </v-text-field> 
        
         <v-dialog
           v-model="dialog"
@@ -134,6 +140,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      search:'',
       dialog: false,
       dialogDelete: false,
       editedIndex: -1,

@@ -122,7 +122,23 @@ class EquipmentController extends Controller
             $equipment->status = "disponible";
             $equipment->save();
 
-            return response()->json(['message' => 'Equipment Inserted successfully!','data' => $contract,], 200); 
+            return response()->json(['message' => 'Equipment Inserted successfully!',
+            'data' => [
+                'id' => $equipment->id_equipement,
+                'num_serie' => $equipment->num_serie,
+                'Type' => $equipment->Type,
+                'marque' => $equipment->marque,
+                'etat' => $equipment->etat,
+                'status' => $equipment->status,
+                'date_amortissement' => $equipment->date_amortissement,
+                'contract' => $equipment->contract ?? null, // Safely return the contract object
+                'contractRef' => $equipment->contract->ref ?? null, // Safely get the contract reference
+                'fournisseur' => $equipment->contract->fournisseur->nom ?? null, // Safely get fournisseur name
+                'employer' => $equipment->employer ?? null,
+                'structure' => $equipment->employer->structure->nom ?? null,
+                'created_at' => Carbon::parse($equipment->created_at)->format('Y-m-d H:i:s'),
+            ],
+        ], 200); 
 
         }catch (\Exception $e) {
             // Log the error for debugging
@@ -163,7 +179,7 @@ class EquipmentController extends Controller
             // Validate the incoming request
             $validated = $request->validate([
                 'num_serie' => 'required|string|',
-                'contract.ref' => 'required|string|',
+                'contractRef' => 'required|string|',
                 'Type' => 'required|string|',
                 'marque' => 'required|string|',
                 'etat'=> 'required|string|',
@@ -178,7 +194,7 @@ class EquipmentController extends Controller
                     'message' => 'equipment not found.',
                 ], 404);
             }
-            $contract = Contract::where('ref', $validated['contract.ref'])->first();
+            $contract = Contract::where('ref', $validated['contractRef'])->first();
             if (!$contract) {
                 return response()->json(['message' => 'Contract not found!'], 200);
             }
