@@ -668,7 +668,6 @@ generatePdf(affectationId) {
               console.error('Error: Equipment not found', this.filteredEquipments, this.editedItem.equipement.id_equipement);
           }
       }
-      this.historys.unshift(this.editedItem);
 
       let index = this.editedIndex;
       let id = this.historys[this.editedIndex].id;
@@ -685,6 +684,8 @@ generatePdf(affectationId) {
               
                 alert(response.data.message);
                 console.log('dfsfsdf',response.data);
+                this.historys.unshift(response.data.history);
+
 
                 this.historys[index].password = response.data.history;
                 

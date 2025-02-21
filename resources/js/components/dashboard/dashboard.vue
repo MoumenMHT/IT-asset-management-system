@@ -74,40 +74,25 @@
         </div>
         
         <div class="card recent-sales overflow-auto">
-  <div class="filter">
-    <a class="icon cursor-pointer" data-bs-toggle="dropdown">
-      Structure
-    </a>
-    &nbsp;
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-      <li class="dropdown-header text-start">
-        <h6>
-          <a class="dropdown-item" @click="filterContracts('All', 'structure')">All</a>
-        </h6>
-      </li>
-      <li v-for="(structure, index) in structures" :key="index">
-        <a class="dropdown-item" @click="filterContracts(structure.nom, 'structure')">
-          {{ structure.nom }}
-        </a>
-      </li>
-    </ul>
+          <div class="filter">
+            
 
-    <a class="icon cursor-pointer" data-bs-toggle="dropdown">
-      Provider
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-      <li class="dropdown-header text-start">
-        <h6>
-          <a class="dropdown-item" @click="filterContracts('All', 'fournisseur')">All</a>
-        </h6>
-      </li>
-      <li v-for="(fournisseur, index) in fournisseurs" :key="index">
-        <a class="dropdown-item" @click="filterContracts(fournisseur.nom, 'fournisseur')">
-          {{ fournisseur.nom }}
-        </a>
-      </li>
-    </ul>
-  </div>
+            <a class="icon cursor-pointer" data-bs-toggle="dropdown">
+              Provider
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+              <li class="dropdown-header text-start">
+                <h6>
+                  <a class="dropdown-item" @click="filterContracts('All', 'fournisseur')">All</a>
+                </h6>
+              </li>
+              <li v-for="(fournisseur, index) in fournisseurs" :key="index">
+                <a class="dropdown-item" @click="filterContracts(fournisseur.nom, 'fournisseur')">
+                  {{ fournisseur.nom }}
+                </a>
+              </li>
+            </ul>
+          </div>
 
               
 
@@ -125,24 +110,33 @@
 
               </div>
             </div>
-            <<div class="card shadow-sm rounded-3">
-              <div class="card-body pb-0">
+            <div class="card shadow-sm rounded-3 border-0">
+              <div class="card-body pb-3">
+                
+                <!-- Dropdown Menu (Top Right) -->
                 <div class="d-flex justify-content-end mb-2">
-                  <a class="icon text-secondary" href="#" data-bs-toggle="dropdown">
-                    <i class="bi bi-three-dots"></i>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
-                    <li>
-                      <a class="dropdown-item" @click="type = 'Dissponible'">Available</a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" @click="type = 'Indissponible'">Unavailable</a>
-                    </li>
-                  </ul>
+                  <div class="dropdown">
+                    <a class="icon text-secondary" href="#" data-bs-toggle="dropdown">
+                      <i class="bi bi-three-dots fs-5"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                      <li>
+                        <a class="dropdown-item" @click="type = 'Dissponible'">Available</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" @click="type = 'Indissponible'">Unavailable</a>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-            
-                <h5 class="card-title mb-3">Number of equipment available/unavailable in each contract</h5>
-            
+
+                <!-- Title & Button (Aligned) -->
+                <div class="d-flex align-items-center mb-3">
+                  <h5 class="card-title mb-0">Number of equipment available/unavailable in each contract</h5>
+                  <a class="btn btn-primary ms-auto px-4 py-2" @click="setAll()">All</a>
+                </div>
+
+                <!-- Contract Selection -->
                 <div class="row g-2 align-items-center mb-3">
                   <div class="col">
                     <v-autocomplete
@@ -155,19 +149,14 @@
                       @update:model-value="() => selectedContract ? ContractEquipmentDisponible(selectedContract) : null"
                     ></v-autocomplete>
                   </div>
-                  <div class="col-auto">
-                    <a class="btn btn-primary w-100 h-100 d-flex align-items-center justify-content-center" @click="setAll()">
-                      All
-                    </a>
-                  </div>
                 </div>
-            
+
+                <!-- Chart -->
                 <div class="chart-container">
-                  <canvas id="ContractEquipmentDisponibleChart"> </canvas>
+                  <canvas id="ContractEquipmentDisponibleChart"></canvas>
                 </div>
               </div>
             </div>
-            
             
     </div>
     
@@ -258,7 +247,7 @@
             <div class="card-body pb-0">
               <div class="d-flex justify-content-between align-items-center mb-3">
 
-                <h5 class="card-title">Number of Contracts by Structure </h5>
+                <h5 class="card-title">Number of Available Equipment in Storage</h5>
                 <a class="btn btn-primary" @click="ContractPieChart('all')">All</a>
 
               </div>
@@ -738,12 +727,12 @@ console.log('Token contract :', token)
   let labels;
 
   if(type === 'all'){
-    labels = [...new Set(this.equipments.map(equipment => equipment.Type))];
+    labels = [...new Set(this.DisponibleEquipments.map(equipment => equipment.Type))];
     console.log('labels', labels);
 
     // Calculate contract count per structure
      data = labels.map(type => {
-      return this.equipments.reduce((acc, item) => item.Type === type ? acc + 1 : acc, 0);
+      return this.DisponibleEquipments.reduce((acc, item) => item.Type === type ? acc + 1 : acc, 0);
     });
   }else{
     console.log('hrrr');
@@ -752,7 +741,7 @@ console.log('Token contract :', token)
     console.log('labels', labels);
 
     data = labels.map(type => {
-      return this.equipments.reduce((acc, item) => item.Type === type ? acc + 1 : acc, 0);
+      return this.DisponibleEquipments.reduce((acc, item) => item.Type === type ? acc + 1 : acc, 0);
     });
   }
 
@@ -767,7 +756,7 @@ console.log('data', data);
       labels: labels, // Labels for the pie chart
       datasets: [
         {
-          label: "Nombre of equipment type being used", // Label for the dataset
+          label: "Nombre of available equipment in the storage", // Label for the dataset
           data: data, // The contract counts for each structure
           backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
@@ -807,6 +796,8 @@ let labels ;
      labels = this.structures.map(structure => structure.nom);
 
     // Calculate contract count per structure
+    console.log('dsfgsgddddddddddd', this.IndisponibleEquipments);
+    
      data = this.structures.map(structure => {
     const count = this.IndisponibleEquipments.reduce((acc, item) => {
       return item.employer.id_structure === structure.id ? acc + 1 : acc;
