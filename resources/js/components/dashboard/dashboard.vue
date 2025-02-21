@@ -256,8 +256,23 @@
         
 
             <div class="card-body pb-0">
-              <h5 class="card-title">Number of Contracts by Structure </h5>
+              <div class="d-flex justify-content-between align-items-center mb-3">
 
+                <h5 class="card-title">Number of Contracts by Structure </h5>
+                <a class="btn btn-primary" @click="ContractPieChart('all')">All</a>
+
+              </div>
+
+              <v-autocomplete
+                v-model="selectedType"
+                :items="types"
+                item-title="Type"
+                label="Select a Type"
+                variant="outlined"
+                return-object
+                class="mb-4"
+                @update:model-value="() => selectedType ? ContractPieChart(selectedType) : null"
+              ></v-autocomplete>
               <div class="chart-container">
                 <canvas  id="EquipementPieChart"> </canvas>
               </div>
@@ -317,6 +332,8 @@
     export default {
       data() {
         return {
+          selectedType: null,
+          types:'',
           type: 'Dissponible',
         selectedContract: null,
         selectedStructure: {
@@ -435,13 +452,13 @@
         },
         structures(newStructures) {
           if (newStructures.length > 0) {
-            this.ContractPieChart(); // Call your chart function here
+            this.ContractPieChart('all'); // Call your chart function here
             this.EquipmentEmployerPieChart('All');
             this.StructureEuipmentTypeChart('All');
           }
         },
         disponibleCount(newContracts){
-          this.ContractEquipmentDisponible('Dissponible');
+          this.ContractEquipmentDisponible('all');
         }
         
       },
@@ -550,7 +567,8 @@ console.log('Token contract :', token)
                     this.equipments = response.data;
 
                     console.log(this.equipments);
-                    
+                     this.types = [...new Set(this.equipments.map(equipment => equipment.Type))];
+
                     
                     // Get unique equipment types
                     this.uniqueTypes = [...new Set(this.equipments.map(item => item.Type))];
@@ -684,13 +702,8 @@ console.log('Token contract :', token)
               {
                 label: "Nombre Equipement par Type",
                 data: data,
-                backgroundColor: [
-                  "rgba(255, 99, 132, 0.8)",
-                  "rgba(54, 162, 235, 0.8)",
-                  "rgba(255, 206, 86, 0.8)",
-                  "rgba(75, 192, 192, 0.8)",
-                  "rgba(153, 102, 255, 0.8)",
-                ],
+                backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
+
                 
                 borderWidth: 1,
               },
@@ -716,24 +729,35 @@ console.log('Token contract :', token)
     },
 
 
-    ContractPieChart() {
+    ContractPieChart(type) {
   // Destroy existing chart instance (if any) to avoid duplicates
   if (this.pieChartInstance) {
     this.pieChartInstance.destroy();
   }
+  let data;
+  let labels;
 
-  // Extract labels from the structures
-  const labels = this.structures.map(structure => structure.nom);
-  console.log('label ',labels);
-  
+  if(type === 'all'){
+    labels = [...new Set(this.equipments.map(equipment => equipment.Type))];
+    console.log('labels', labels);
 
-  // Calculate contract count per structure
-  const data = this.structures.map(structure => {
-    const count = this.contracts.reduce((acc, item) => {
-      return item.id_structure === structure.id ? acc + 1 : acc;
-    }, 0);
-    return count; // Return the count for this structure
-  });
+    // Calculate contract count per structure
+     data = labels.map(type => {
+      return this.equipments.reduce((acc, item) => item.Type === type ? acc + 1 : acc, 0);
+    });
+  }else{
+    console.log('hrrr');
+    
+    labels = [type];
+    console.log('labels', labels);
+
+    data = labels.map(type => {
+      return this.equipments.reduce((acc, item) => item.Type === type ? acc + 1 : acc, 0);
+    });
+  }
+
+console.log('data', data);
+
 
   // Create the chart
   const ctx = document.getElementById("EquipementPieChart").getContext("2d");
@@ -743,9 +767,9 @@ console.log('Token contract :', token)
       labels: labels, // Labels for the pie chart
       datasets: [
         {
-          label: "Nombre de contrat par structure", // Label for the dataset
+          label: "Nombre of equipment type being used", // Label for the dataset
           data: data, // The contract counts for each structure
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
@@ -817,7 +841,7 @@ let labels ;
         {
           label: "Nombre de contrat par structure", // Label for the dataset
           data: data, // The contract counts for each structure
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
@@ -888,7 +912,7 @@ StructureEuipmentTypeChart(structure) {
         {
           label: "Nombre de contrat par structure", // Label for the dataset
           data: data, // The contract counts for each equipment type
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
@@ -965,7 +989,7 @@ if (type === 'Indissponible') {
         {
           label: "Nombre des equipement " + type +  " par contrat", // Label for the dataset
           data: data, // The contract counts for each structure
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
