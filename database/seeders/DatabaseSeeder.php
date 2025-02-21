@@ -21,10 +21,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Contract::factory()->count(10)->create();
-        Employer::factory()->count(100)->create();
-        Equipment::factory()->count(300)->create();
-        Hostory::factory()->count(500)->create();
+        //Contract::factory()->count(10)->create();
+        //Employer::factory()->count(100)->create();
+        Equipment::factory()->count(100)->create();
+        //Hostory::factory()->count(200)->create();
 
 
     }

@@ -346,7 +346,7 @@
         { label: 'Employer Code', field: 'employer.code' },
         { label: 'Employer First Name', field: 'employer.prenom' },
         { label: 'Employer Last Name', field: 'employer.nom' },
-        { label: 'Provider', field: 'employer.fonc' },
+        { label: 'Function', field: 'employer.fonc' },
         { label: 'Structure', field: 'structure' },
 
       ], // Define table columns
@@ -758,7 +758,7 @@ console.log('data', data);
         {
           label: "Nombre of available equipment in the storage", // Label for the dataset
           data: data, // The contract counts for each structure
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559", "#b805ff"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
@@ -797,9 +797,13 @@ let labels ;
 
     // Calculate contract count per structure
     console.log('dsfgsgddddddddddd', this.IndisponibleEquipments);
+    console.log('structure', this.structures);
+    
     
      data = this.structures.map(structure => {
     const count = this.IndisponibleEquipments.reduce((acc, item) => {
+      console.log('hereeeee',item.employer.id_structure);
+      
       return item.employer.id_structure === structure.id ? acc + 1 : acc;
     }, 0);
     return count; // Return the count for this structure
@@ -832,7 +836,7 @@ let labels ;
         {
           label: "Nombre de contrat par structure", // Label for the dataset
           data: data, // The contract counts for each structure
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559", "#b805ff"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
@@ -903,7 +907,7 @@ StructureEuipmentTypeChart(structure) {
         {
           label: "Nombre de contrat par structure", // Label for the dataset
           data: data, // The contract counts for each equipment type
-          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559"], // Pie slice colors (you can add more if needed)
+          backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#a3db48", "#47bab2", "#7777d4", "#0a0559", "#b805ff"], // Pie slice colors (you can add more if needed)
           hoverOffset: 4, // Add a hover effect for better UX
         },
       ],
